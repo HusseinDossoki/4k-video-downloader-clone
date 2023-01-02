@@ -55,6 +55,7 @@
     },
     "windows": [
       {
+        "label": "main",
         "fullscreen": false,
         "title": "4K Video Downloader (Cloned)",
         "resizable": true,
@@ -62,7 +63,8 @@
         "minWidth": 515,
         "height": 725,
         "minHeight": 725,
-        "alwaysOnTop": false
+        "alwaysOnTop": false,
+        "center": true
       }
     ]
   }

@@ -2,22 +2,51 @@
   <header>
     <div class="link-container">
       <div class="link past-link">
-          <p class="link-icon">+</p>
-          <p class="link-text">Past Link</p>
-        </div>
-        <div class="link smart-mode">
-          <p class="link-icon">💡</p>
-          <p class="link-text">Smart Mode</p>
-        </div>
-        <div class="link preferences">
-          <p class="link-icon">⚙️</p>
-          <p class="link-text">Preferences</p>
-        </div>
+        <p class="link-icon">+</p>
+        <p class="link-text">Past Link</p>
+      </div>
+      <div class="link smart-mode" @click="openSmartMode()">
+        <p class="link-icon">💡</p>
+        <p class="link-text">Smart Mode</p>
+      </div>
+      <div class="link preferences" @click="openPreferences()">
+        <p class="link-icon">⚙️</p>
+        <p class="link-text">Preferences</p>
+      </div>
     </div>
   </header>
 </template>
   
 <script setup>
+import { WebviewWindow } from "@tauri-apps/api/window";
+
+function openSmartMode() {
+  const webview = new WebviewWindow("SmartMode", {
+    url: '/smart-mode',
+    fullscreen: false,
+    title: "Smart Mode",
+    resizable: false,
+    width: 420,
+    height: 380,
+    center: true,
+    alwaysOnTop: true,
+    focus: true,
+  });
+}
+
+function openPreferences() {
+  const webview = new WebviewWindow("Preferences", {
+    url: '/preferences',
+    fullscreen: false,
+    title: "Preferences",
+    resizable: false,
+    width: 620,
+    height: 690,
+    center: true,
+    alwaysOnTop: true,
+    focus: true,
+  });
+}
 
 </script>
   
@@ -33,6 +62,7 @@ header {
 .link-container {
   display: flex;
 }
+
 .link {
   margin-top: 3px;
   padding-left: 10px;
@@ -61,9 +91,11 @@ header {
 .past-link .link-icon {
   background-color: rgb(7, 155, 7);
 }
+
 .smart-mode .link-icon {
   background-color: transparent;
 }
+
 .preferences {
   margin-left: auto;
 }
