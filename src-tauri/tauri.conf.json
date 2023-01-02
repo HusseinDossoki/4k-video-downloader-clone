@@ -56,10 +56,13 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 600,
-        "resizable": true,
         "title": "4K Video Downloader (Cloned)",
-        "width": 800
+        "resizable": true,
+        "width": 515,
+        "minWidth": 515,
+        "height": 725,
+        "minHeight": 725,
+        "alwaysOnTop": false
       }
     ]
   }
