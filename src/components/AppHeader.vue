@@ -1,9 +1,10 @@
 <template>
   <header>
     <div class="link-container">
-      <div class="link past-link">
+      <div class="link past-link" @click="printClipboard">
         <p class="link-icon">+</p>
         <p class="link-text">Past Link</p>
+        <img v-if="displayYoutubeIcon" class="youtube" src="../assets/youtube.png" alt="">
       </div>
       <div class="link smart-mode" @click="openSmartMode()">
         <p class="link-icon">💡</p>
@@ -18,7 +19,11 @@
 </template>
   
 <script setup>
+import { ref } from "vue";
 import { WebviewWindow } from "@tauri-apps/api/window";
+import { readText } from '@tauri-apps/api/clipboard';
+
+const displayYoutubeIcon = ref(false);
 
 function openSmartMode() {
   const webview = new WebviewWindow("SmartMode", {
@@ -48,12 +53,20 @@ function openPreferences() {
   });
 }
 
+setInterval(() => {
+  readText()
+    .then(clipboardText => {
+      displayYoutubeIcon.value = clipboardText?.includes('youtube.com');
+    });
+}, 1000);
+
 </script>
   
 <style scoped>
 p {
   margin-bottom: 0;
 }
+
 header {
   height: 57px;
   top: 0;
@@ -101,6 +114,14 @@ header {
 
 .preferences {
   margin-left: auto;
+}
+
+img.youtube {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  top: 15px;
+  left: 40px;
 }
 </style>
   
