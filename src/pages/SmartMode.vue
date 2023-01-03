@@ -5,7 +5,7 @@
       only one time and the application will apply your settings to all downloads.
     </header>
     <section>
-      <div class="form-check enable-smart-mode">
+      <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
         <label class="form-check-label" for="flexCheckDefault">
           Enable Smart Mode
@@ -35,7 +35,7 @@
             <option value="MP4">MKV - Video</option>
             <option value="MP4">MP3 - Video</option>
           </select>
-          <small class="d-block">Some videos may not be available in the selected quality. In such cases, the videos
+          <small class="d-block mt-1">Some videos may not be available in the selected quality. In such cases, the videos
             will
             be
             downloaded in the closest quality to the one you specified.</small>
@@ -73,9 +73,11 @@ async function closeWindow() {
 .root {
   background-color: color(srgb 0.1843 0.1843 0.1843);
   height: 100%;
-  bottom: 0;
   position: fixed;
+  bottom: 0;
   top: 0;
+  right: 0;
+  left: 0;
 }
 
 header,

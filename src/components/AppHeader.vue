@@ -41,7 +41,7 @@ function openPreferences() {
     title: "Preferences",
     resizable: false,
     width: 620,
-    height: 690,
+    height: 650,
     center: true,
     alwaysOnTop: false,
     focus: true,
@@ -51,6 +51,9 @@ function openPreferences() {
 </script>
   
 <style scoped>
+p {
+  margin-bottom: 0;
+}
 header {
   height: 57px;
   top: 0;
