@@ -1,3 +1,4 @@
 body {
-  background-color: #252423;
+  background-color: color(srgb 0.1176 0.1176 0.1177);
+  color: rgba(238, 238, 238, 0.646);
 }

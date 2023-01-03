@@ -29,7 +29,7 @@ function openSmartMode() {
     width: 420,
     height: 380,
     center: true,
-    alwaysOnTop: true,
+    alwaysOnTop: false,
     focus: true,
   });
 }
@@ -43,7 +43,7 @@ function openPreferences() {
     width: 620,
     height: 690,
     center: true,
-    alwaysOnTop: true,
+    alwaysOnTop: false,
     focus: true,
   });
 }
@@ -55,7 +55,7 @@ header {
   height: 57px;
   top: 0;
   width: 100%;
-  background-color: #323130;
+  background-color: #2d2d2d;
   color: rgba(238, 238, 238, 0.646);
 }
 

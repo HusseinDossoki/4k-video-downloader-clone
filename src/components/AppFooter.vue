@@ -13,7 +13,7 @@ footer {
   height: 25px;
   bottom: 0;
   width: 100%;
-  background: #323130;
+  background-color: #2d2d2d;
   position: fixed;
   color: rgba(238, 238, 238, 0.646);
   font-size: 11px;
