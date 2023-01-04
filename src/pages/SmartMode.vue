@@ -6,34 +6,30 @@
     </header>
     <section>
       <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-        <label class="form-check-label" for="flexCheckDefault">
+        <input class="form-check-input" type="checkbox" v-model="smartModeEnabled" id="smartModeCheckbox">
+        <label class="form-check-label" for="smartModeCheckbox">
           Enable Smart Mode
         </label>
       </div>
 
-      <div class="row mt-2">
+      <div class="row mt-2" :class="{ disabled: !smartModeEnabled }">
         <div class="col-2">
           <label>Format</label>
         </div>
         <div class="col-10">
-          <select class="w-100">
-            <option value="MP4">MP4 - Video</option>
-            <option value="MP4">MKV - Video</option>
-            <option value="MP4">MP3 - Video</option>
+          <select class="w-100" v-model="format" :disabled="!smartModeEnabled">
+            <option :value="format.title" v-for="format in formats">{{ format.title }}</option>
           </select>
         </div>
       </div>
 
-      <div class="row mt-3">
+      <div class="row mt-3" :class="{ disabled: !smartModeEnabled }">
         <div class="col-2">
           <label>Quality</label>
         </div>
         <div class="col-10">
-          <select class="w-100">
-            <option value="MP4">MP4 - Video</option>
-            <option value="MP4">MKV - Video</option>
-            <option value="MP4">MP3 - Video</option>
+          <select class="w-100" v-model="quality" :disabled="!smartModeEnabled">
+            <option :value="quality.title" v-for="quality in qualities">{{ quality.title }}</option>
           </select>
           <small class="d-block mt-1">Some videos may not be available in the selected quality. In such cases, the
             videos
@@ -43,20 +39,20 @@
         </div>
       </div>
 
-      <div class="row mt-3">
+      <div class="row mt-3" :class="{ disabled: !smartModeEnabled }">
         <div class="col-2">
           <label>Directory</label>
         </div>
         <div class="col-10">
-          <span class="path" v-if="path">{{path}}</span>
-          <button class="button browse" @click="browseDirectory">Browse</button>
+          <span class="path" v-if="directory">{{ directory }}</span>
+          <button class="button browse" @click="browseDirectory" :disabled="!smartModeEnabled">Browse</button>
         </div>
       </div>
 
     </section>
     <footer>
       <button class="button mx-2" @click="closeWindow">Cancel</button>
-      <button class="button">Ok</button>
+      <button class="button" @click="save" :disabled="!isValid" :class="{ disabled: !isValid }">Ok</button>
     </footer>
   </div>
 </template>
@@ -64,30 +60,145 @@
 <script setup>
 import { appWindow } from '@tauri-apps/api/window';
 import { open } from '@tauri-apps/api/dialog';
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import { useSmartModeStore } from "../stores/SmartModeStore";
 
-const path = ref(null);
+const smartModeStore = useSmartModeStore();
+const formats = ref([
+  {
+    title: 'Any Video',
+    type: 'video',
+  },
+  {
+    title: 'MP4 . Video',
+    type: 'video',
+  },
+  {
+    title: 'MKV . Video',
+    type: 'video',
+  },
+  {
+    title: 'MP3 . Audio',
+    type: 'audio',
+  },
+  {
+    title: 'M4A . Audio',
+    type: 'audio',
+  },
+  {
+    title: 'OGG . Audio',
+    type: 'audio',
+  }
+]);
+const qualities = ref([
+  {
+    title: 'Best Quality',
+    type: 'all'
+  },
+  {
+    title: '8K 60fps',
+    type: 'vidoe'
+  },
+  {
+    title: '8K',
+    type: 'vidoe'
+  },
+  {
+    title: '4K 60fps',
+    type: 'vidoe'
+  },
+  {
+    title: '4K',
+    type: 'vidoe'
+  },
+  {
+    title: '2K 60fps',
+    type: 'vidoe'
+  },
+  {
+    title: '2K',
+    type: 'vidoe'
+  },
+  {
+    title: '1080p 60fps',
+    type: 'vidoe'
+  },
+  {
+    title: '1080p',
+    type: 'vidoe'
+  },
+  {
+    title: '720p 60fps',
+    type: 'vidoe'
+  },
+  {
+    title: '720p',
+    type: 'vidoe'
+  },
+  {
+    title: '480p',
+    type: 'vidoe'
+  },
+  {
+    title: '360p',
+    type: 'vidoe'
+  },
+  {
+    title: '240p',
+    type: 'vidoe'
+  },
+  {
+    title: 'QCIF',
+    type: 'vidoe'
+  },
+  {
+    title: 'High . 256kbps',
+    type: 'audio'
+  },
+  {
+    title: 'Medium . 192kbps',
+    type: 'audio'
+  },
+  {
+    title: 'Low . 128kbps',
+    type: 'audio'
+  },
+]);
+
+const smartModeEnabled = ref(smartModeStore.$state.smartModeEnabled);
+const format = ref(smartModeStore.$state.format);
+const quality = ref(smartModeStore.$state.quality);
+const directory = ref(smartModeStore.$state.directory);
+const isValid = computed(() => !smartModeEnabled.value || (format.value && quality.value && directory.value));
 
 async function closeWindow() {
   await appWindow.close();
 }
 
+async function save() {
+  if (smartModeEnabled.value) {
+    smartModeStore.enable(format.value, quality.value, directory.value).then(async res => {
+      await appWindow.close();
+    });
+  } else {
+    smartModeStore.disable().then(async res => {
+      await appWindow.close();
+    });
+  }
+
+}
+
 async function browseDirectory() {
-  path.value = await open({
+  directory.value = await open({
     title: '4K Downloder Output Directory',
     directory: true,
     defaultPath: '.'
   });
 }
 
-function formatPath() {
-  if(!path.value) return 'Click on browse to chose directory';
-  return path.value.slice(0, 35);
-}
-
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .root {
   background-color: color(srgb 0.1843 0.1843 0.1843);
   height: 100%;
@@ -134,6 +245,7 @@ select {
   padding: 6px;
   border-radius: 2px;
 }
+
 .browse {
   float: right;
 }
@@ -144,5 +256,21 @@ footer {
   right: 0;
   left: 0;
   text-align: right;
+}
+
+.row.disabled {
+  color: gray;
+
+  .button {
+    color: gray;
+  }
+
+  select {
+    background-color: gray;
+  }
+}
+
+.button.disabled {
+  color: gray;
 }
 </style>

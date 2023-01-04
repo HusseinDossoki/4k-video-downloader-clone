@@ -28,13 +28,11 @@ const displayYoutubeIcon = ref(false);
 function openSmartMode() {
   const webview = new WebviewWindow("SmartMode", {
     url: '/smart-mode',
-    fullscreen: false,
     title: "Smart Mode",
     resizable: false,
     width: 420,
     height: 380,
     center: true,
-    alwaysOnTop: false,
     focus: true,
   });
 }
@@ -42,13 +40,11 @@ function openSmartMode() {
 function openPreferences() {
   const webview = new WebviewWindow("Preferences", {
     url: '/preferences',
-    fullscreen: false,
     title: "Preferences",
     resizable: false,
     width: 620,
     height: 650,
     center: true,
-    alwaysOnTop: false,
     focus: true,
   });
 }
