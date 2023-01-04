@@ -35,7 +35,8 @@
             <option value="MP4">MKV - Video</option>
             <option value="MP4">MP3 - Video</option>
           </select>
-          <small class="d-block mt-1">Some videos may not be available in the selected quality. In such cases, the videos
+          <small class="d-block mt-1">Some videos may not be available in the selected quality. In such cases, the
+            videos
             will
             be
             downloaded in the closest quality to the one you specified.</small>
@@ -47,8 +48,8 @@
           <label>Directory</label>
         </div>
         <div class="col-10">
-          <span class="path">/Users/husseindossoki/Downloads</span>
-          <button class="button browse">Browse</button>
+          <span class="path" v-if="path">{{path}}</span>
+          <button class="button browse" @click="browseDirectory">Browse</button>
         </div>
       </div>
 
@@ -62,9 +63,26 @@
 
 <script setup>
 import { appWindow } from '@tauri-apps/api/window';
+import { open } from '@tauri-apps/api/dialog';
+import { ref } from "vue";
+
+const path = ref(null);
 
 async function closeWindow() {
   await appWindow.close();
+}
+
+async function browseDirectory() {
+  path.value = await open({
+    title: '4K Downloder Output Directory',
+    directory: true,
+    defaultPath: '.'
+  });
+}
+
+function formatPath() {
+  if(!path.value) return 'Click on browse to chose directory';
+  return path.value.slice(0, 35);
 }
 
 </script>
@@ -106,12 +124,16 @@ select {
   color: white;
 }
 
+
+.path::-webkit-scrollbar {
+  display: none;
+}
+
 .path {
   background-color: color(srgb 0.1608 0.1608 0.1608);
   padding: 6px;
   border-radius: 2px;
 }
-
 .browse {
   float: right;
 }

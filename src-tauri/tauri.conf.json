@@ -17,6 +17,11 @@
         "all": true,
         "readText": true,
         "writeText": true
+      },
+      "dialog": {
+        "all": true,
+        "open": true,
+        "save": true
       }
     },
     "bundle": {
