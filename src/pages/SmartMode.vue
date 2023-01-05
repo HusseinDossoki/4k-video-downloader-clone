@@ -165,10 +165,18 @@ const qualities = ref([
   },
 ]);
 
-const smartModeEnabled = ref(smartModeStore.$state.smartModeEnabled);
+const smartModeEnabled = ref(smartModeStore.$state.enabled);
 const format = ref(smartModeStore.$state.format);
 const quality = ref(smartModeStore.$state.quality);
 const directory = ref(smartModeStore.$state.directory);
+
+smartModeStore.init().then(res => {
+  smartModeEnabled.value = smartModeStore.$state.enabled;
+  format.value = smartModeStore.$state.format;
+  quality.value = smartModeStore.$state.quality;
+  directory.value = smartModeStore.$state.directory;
+});
+
 const isValid = computed(() => !smartModeEnabled.value || (format.value && quality.value && directory.value));
 
 async function closeWindow() {
@@ -176,16 +184,13 @@ async function closeWindow() {
 }
 
 async function save() {
-  if (smartModeEnabled.value) {
-    smartModeStore.enable(format.value, quality.value, directory.value).then(async res => {
+  smartModeStore.update(smartModeEnabled.value, format.value, quality.value, directory.value)
+    .then(async res => {
       await appWindow.close();
+    })
+    .catch(err => {
+      console.log('err ==> ', err);
     });
-  } else {
-    smartModeStore.disable().then(async res => {
-      await appWindow.close();
-    });
-  }
-
 }
 
 async function browseDirectory() {

@@ -2,22 +2,29 @@
     all(not(debug_assertions), target_os = "windows"),
     windows_subsystem = "windows"
 )]
-
-// Modules tree
+use diesel_migrations::embed_migrations;
+#[macro_use]
+extern crate diesel;
+#[macro_use]
+extern crate diesel_migrations;
+embed_migrations!("./migrations/");
+pub mod db;
 pub mod downloader;
-
-// Use
-use downloader::download_youtube_vuideo;
-
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-#[tauri::command]
-async fn download_video(url: String) {
-    download_youtube_vuideo(&url).await;
-}
+pub mod schema;
+mod tauri_commands;
+use tauri_commands as commands;
 
 fn main() {
+    // Apply the database migrations
+    // let conn = db::establish_connection();
+    // diesel_migrations::run_pending_migrations(&conn).expect("Error migrating");
+
+    // Tauri config
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![download_video])
+        .invoke_handler(tauri::generate_handler![
+            commands::get_smart_mode,
+            commands::update_smart_mode,
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
