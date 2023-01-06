@@ -1,5 +1,7 @@
 pub mod models;
 pub mod smart_mode;
+pub mod preferences;
+
 use diesel::prelude::*;
 
 use std::path;

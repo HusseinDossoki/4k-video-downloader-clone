@@ -1,4 +1,4 @@
-use crate::db::{smart_mode, models};
+use crate::db::{smart_mode, preferences, models};
 
 #[tauri::command]
 pub fn get_smart_mode() -> Result<models::SmartMode, String> {
@@ -8,4 +8,15 @@ pub fn get_smart_mode() -> Result<models::SmartMode, String> {
 #[tauri::command]
 pub fn update_smart_mode(params: models::UpdateSmartMode) -> Result<models::SmartMode, String> {
   return smart_mode::update_smart_mode(params);
+}
+
+
+#[tauri::command]
+pub fn get_general_preferences() -> Result<models::GeneralPreferences, String> {
+  return preferences::get_general_preferences();
+}
+
+#[tauri::command]
+pub fn update_general_preferences(params: models::UpdateGeneralPreferences) -> Result<models::GeneralPreferences, String> {
+  return preferences::update_general_preferences(params);
 }

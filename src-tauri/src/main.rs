@@ -24,6 +24,8 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             commands::get_smart_mode,
             commands::update_smart_mode,
+            commands::get_general_preferences,
+            commands::update_general_preferences,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
