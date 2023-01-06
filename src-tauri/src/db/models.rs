@@ -37,3 +37,21 @@ pub struct UpdateGeneralPreferences {
     pub skip_playlists_duplicates: bool,
     pub remove_downloaded_items: bool,
 }
+
+#[derive(Queryable, Serialize, Deserialize, Debug)]
+pub struct DownloadItem {
+    pub id: i32,
+    pub title: String,
+    pub short_description: Option<String>,
+    pub length_seconds: i32,
+    pub size: String,
+    pub format: String,
+    pub quality: String,
+    pub progress: i32,
+    pub status: String,
+    pub url: String,
+    pub directory: String,
+    // TODO
+    // created_on
+    // last_modified_on
+}

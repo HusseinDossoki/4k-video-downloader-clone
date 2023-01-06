@@ -1,6 +1,22 @@
 // @generated automatically by Diesel CLI.
 
 diesel::table! {
+    downloads (id) {
+        id -> Integer,
+        title -> Text,
+        short_description -> Nullable<Text>,
+        length_seconds -> Integer,
+        size -> Text,
+        format -> Text,
+        quality -> Text,
+        progress -> Integer,
+        status -> Text,
+        url -> Text,
+        directory -> Text,
+    }
+}
+
+diesel::table! {
     preferences (id) {
         id -> Integer,
         prevent_system_sleep -> Bool,
@@ -22,6 +38,7 @@ diesel::table! {
 }
 
 diesel::allow_tables_to_appear_in_same_query!(
+    downloads,
     preferences,
     smartmode,
 );

@@ -1,6 +1,7 @@
 pub mod models;
 pub mod smart_mode;
 pub mod preferences;
+pub mod downloads;
 
 use diesel::prelude::*;
 

@@ -26,6 +26,7 @@ fn main() {
             commands::update_smart_mode,
             commands::get_general_preferences,
             commands::update_general_preferences,
+            commands::get_downloads,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

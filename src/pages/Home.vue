@@ -1,8 +1,8 @@
 <template>
-  <AppHeader/>
-  <EmptyList v-if="empty" />
-  <VideosList v-if="!empty" />
-  <AppFooter/>
+  <AppHeader />
+  <EmptyList v-if="downloadsStore.emptyList" />
+  <VideosList v-if="!downloadsStore.emptyList" />
+  <AppFooter />
 </template>
 
 <script setup>
@@ -10,9 +10,9 @@ import AppHeader from '../components/AppHeader.vue';
 import EmptyList from '../components/EmptyList.vue';
 import AppFooter from '../components/AppFooter.vue';
 import VideosList from '../components/VideosList.vue';
-import {ref} from "vue";
+import { useDownloadsStore } from "../stores/DownloadsStore";
 
-const empty = ref(false);
+const downloadsStore = useDownloadsStore();
 
 </script>
 

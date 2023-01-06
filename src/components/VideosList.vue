@@ -1,15 +1,15 @@
 <template>
-  <section class="d-flex" :class="{ odd: index % 2 == 0, active: selected == index }" v-for="(video, index) in videos"
-    :key="index" @click="selected = index">
+  <section class="d-flex" :class="{ odd: index % 2 == 0, active: selected?.id == video.id }"
+    v-for="(video, index) in downloadsStore.list" :key="video.id" @click="selected = index">
     <img src="../assets/empty-list.png" alt="video image">
     <div class="body">
-      <h6 class="video-title">Demo youtube video title</h6>
+      <h6 class="video-title">{{ video.title }}</h6>
       <div class="d-flex">
-        <div class="bar-item">🕑 03:00</div>
-        <div class="bar-item">ᴞ 66.5 MB</div>
+        <div class="bar-item">🕑 {{ formatTime(video.length_seconds) }}</div>
+        <div class="bar-item">ᴞ {{ video.size }}</div>
         <div class="bar-item">⬇
           <div class="progress">
-            <div class="progress-bar" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0"
+            <div class="progress-bar" role="progressbar" :style="{ width: video.progress + '%' }" aria-valuemin="0"
               aria-valuemax="100"></div>
           </div>
         </div>
@@ -24,8 +24,16 @@
 
 <script setup>
 import { ref } from "vue";
-const videos = ref([1, 2, 1, 1, 1, 1]);
+import { useDownloadsStore } from "../stores/DownloadsStore";
+const downloadsStore = useDownloadsStore();
 const selected = ref(null);
+
+function formatTime(seconds) {
+  let date = new Date(null);
+  date.setSeconds(seconds);
+  let hhmmssFormat = date.toISOString().substr(11, 8);
+  return hhmmssFormat;
+}
 </script>
 
 <style scoped>
@@ -37,9 +45,11 @@ section {
   padding: 5px;
   overflow: hidden;
 }
+
 section.active {
   background-color: color(srgb 0.1504 0.4695 0.94) !important;
 }
+
 section.active .bar-item {
   color: white !important;
 }
