@@ -7,7 +7,7 @@ use diesel_migrations::embed_migrations;
 extern crate diesel;
 #[macro_use]
 extern crate diesel_migrations;
-embed_migrations!("./migrations/");
+embed_migrations!("./migrations");
 pub mod db;
 pub mod downloader;
 pub mod schema;
@@ -16,8 +16,8 @@ use tauri_commands as commands;
 
 fn main() {
     // Apply the database migrations
-    // let conn = db::establish_connection();
-    // diesel_migrations::run_pending_migrations(&conn).expect("Error migrating");
+    let conn = db::establish_connection();
+    embedded_migrations::run(&conn).expect("Error migrating");
 
     // Tauri config
     tauri::Builder::default()
