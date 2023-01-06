@@ -1,10 +1,10 @@
 <template>
   <header>
     <div class="link-container">
-      <div class="link past-link" @click="printClipboard">
+      <div class="link past-link" @click="download">
         <p class="link-icon"><i class="fa-solid fa-circle-plus"></i></p>
         <p class="link-text">Past Link</p>
-        <i v-if="displayYoutubeIcon" class="fa-brands fa-youtube"></i>
+        <i v-if="validYoutubeUrl" class="fa-brands fa-youtube"></i>
       </div>
       <div class="link smart-mode" @click="openSmartMode()">
         <p class="link-icon"><i class="fa-regular fa-lightbulb text-secondary"
@@ -25,7 +25,8 @@ import { useSmartModeStore } from "../stores/SmartModeStore";
 import { WebviewWindow } from "@tauri-apps/api/window";
 import { readText } from '@tauri-apps/api/clipboard';
 
-const displayYoutubeIcon = ref(false);
+const validYoutubeUrl = ref(false);
+const copiedUrl = ref(null);
 const smartModeStore = useSmartModeStore();
 
 function openSmartMode() {
@@ -52,10 +53,16 @@ function openPreferences() {
   });
 }
 
+function download() {
+  if (!validYoutubeUrl.value) return;
+  console.log(copiedUrl.value);
+}
+
 setInterval(() => {
   readText()
-    .then(clipboardText => {
-      displayYoutubeIcon.value = clipboardText?.includes('youtube.com');
+    .then(res => {
+      validYoutubeUrl.value = res?.includes('youtube.com/watch');
+      copiedUrl.value = res;
     });
 }, 1000);
 

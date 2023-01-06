@@ -29,7 +29,7 @@ const useDownloadsStoreFactory = defineStore("downloadsStore", {
 
       return invoke("get_downloads")
         .then(res => {
-          console.log('Download => ', res);
+          console.log('Downloads => ', res);
           this.list = res;
           this.loading = false;
         })
