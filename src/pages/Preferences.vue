@@ -3,11 +3,11 @@
     <header>
       <div class="link-container">
         <div class="link" @click="selected = 1" :class="{active: selected == 1}">
-          <p class="link-icon">⚙️</p>
+          <p class="link-icon"><i class="fa-solid fa-sliders"></i></p>
           <p class="link-text">General</p>
         </div>
         <div class="link" @click="selected = 2" :class="{ active: selected == 2 }">
-          <p class="link-icon">🔔</p>
+          <p class="link-icon"><i class="fa-regular fa-bell"></i></p>
           <p class="link-text">Notifications</p>
         </div>
       </div>

@@ -1,7 +1,14 @@
 import { defineStore } from "pinia";
 import { invoke } from "@tauri-apps/api/tauri";
 
-export const useSmartModeStore = defineStore("smartModeStore", {
+/**
+ * We need a way to watch the state and then update them in db.
+ * There are some solutions for this case (Setup Store, Proxy, Object.assign)
+ * https://pinia.vuejs.org/core-concepts/#setup-stores => Setup Store
+ * https://github.com/vuejs/pinia/discussions/794 => (Proxy, Object.assign)
+ * We will use the Proxy solution
+ */
+const useSmartModeStoreFactory = defineStore("smartModeStore", {
   state: () => ({
     id: null,
     enabled: false,
@@ -68,5 +75,17 @@ export const useSmartModeStore = defineStore("smartModeStore", {
           this.loading = false;
         });
     },
+  }
+});
+
+let store = null;
+export const useSmartModeStore = new Proxy(useSmartModeStoreFactory, {
+  apply: (target, thisArg, argumentsList) => {
+    if (!store) {
+      store = target.apply(thisArg, argumentsList);
+      store.init();
+    }
+
+    return store;
   }
 });

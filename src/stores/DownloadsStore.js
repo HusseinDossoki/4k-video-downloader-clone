@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import { watch } from "vue";
 import { invoke } from "@tauri-apps/api/tauri";
 
 /**

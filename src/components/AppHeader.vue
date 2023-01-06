@@ -2,28 +2,31 @@
   <header>
     <div class="link-container">
       <div class="link past-link" @click="printClipboard">
-        <p class="link-icon">+</p>
+        <p class="link-icon"><i class="fa-solid fa-circle-plus"></i></p>
         <p class="link-text">Past Link</p>
-        <img v-if="displayYoutubeIcon" class="youtube" src="../assets/youtube.png" alt="">
+        <i v-if="displayYoutubeIcon" class="fa-brands fa-youtube"></i>
       </div>
       <div class="link smart-mode" @click="openSmartMode()">
-        <p class="link-icon">💡</p>
+        <p class="link-icon"><i class="fa-regular fa-lightbulb text-secondary"
+            :class="{ 'text-warning': smartModeStore.enabled }"></i></p>
         <p class="link-text">Smart Mode</p>
       </div>
       <div class="link preferences" @click="openPreferences()">
-        <p class="link-icon">⚙️</p>
+        <p class="link-icon"><i class="fa-solid fa-screwdriver-wrench"></i></p>
         <p class="link-text">Preferences</p>
       </div>
     </div>
   </header>
 </template>
-  
+
 <script setup>
 import { ref } from "vue";
+import { useSmartModeStore } from "../stores/SmartModeStore";
 import { WebviewWindow } from "@tauri-apps/api/window";
 import { readText } from '@tauri-apps/api/clipboard';
 
 const displayYoutubeIcon = ref(false);
+const smartModeStore = useSmartModeStore();
 
 function openSmartMode() {
   const webview = new WebviewWindow("SmartMode", {
@@ -57,7 +60,7 @@ setInterval(() => {
 }, 1000);
 
 </script>
-  
+
 <style scoped>
 p {
   margin-bottom: 0;
@@ -90,7 +93,7 @@ header {
   height: 30px;
   text-align: center;
   margin: auto;
-  font-size: 20px;
+  font-size: 25px;
   font-weight: bold;
 }
 
@@ -100,8 +103,11 @@ header {
   font-size: 12px;
 }
 
-.past-link .link-icon {
-  background-color: rgb(7, 155, 7);
+.past-link .link-icon i {
+  color: rgb(7, 155, 7);
+  background: white;
+  border-radius: 50%;
+  zoom: 1.3;
 }
 
 .smart-mode .link-icon {
@@ -112,12 +118,10 @@ header {
   margin-left: auto;
 }
 
-img.youtube {
-  width: 20px;
-  height: 20px;
+i.fa-youtube {
+  color: color(display-p3 0.9176 0.2 0.1373);
   position: absolute;
-  top: 15px;
+  top: 23px;
   left: 40px;
 }
 </style>
-  

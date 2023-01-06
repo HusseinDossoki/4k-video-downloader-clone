@@ -60,10 +60,11 @@
 <script setup>
 import { appWindow } from '@tauri-apps/api/window';
 import { open } from '@tauri-apps/api/dialog';
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { useSmartModeStore } from "../stores/SmartModeStore";
 
 const smartModeStore = useSmartModeStore();
+
 const formats = ref([
   {
     title: 'Any Video',
@@ -165,19 +166,18 @@ const qualities = ref([
   },
 ]);
 
-const smartModeEnabled = ref(smartModeStore.$state.enabled);
-const format = ref(smartModeStore.$state.format);
-const quality = ref(smartModeStore.$state.quality);
-const directory = ref(smartModeStore.$state.directory);
-
-smartModeStore.init().then(res => {
-  smartModeEnabled.value = smartModeStore.$state.enabled;
-  format.value = smartModeStore.$state.format;
-  quality.value = smartModeStore.$state.quality;
-  directory.value = smartModeStore.$state.directory;
-});
-
+const smartModeEnabled = ref(smartModeStore.enabled);
+const format = ref(smartModeStore.format);
+const quality = ref(smartModeStore.quality);
+const directory = ref(smartModeStore.directory);
 const isValid = computed(() => !smartModeEnabled.value || (format.value && quality.value && directory.value));
+
+watch(smartModeStore.$state, () => {
+  smartModeEnabled.value = smartModeStore.enabled;
+  format.value = smartModeStore.format;
+  quality.value = smartModeStore.quality;
+  directory.value = smartModeStore.directory;
+}, { deep: true });
 
 async function closeWindow() {
   await appWindow.close();

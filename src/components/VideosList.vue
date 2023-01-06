@@ -1,6 +1,6 @@
 <template>
   <section class="d-flex" :class="{ odd: index % 2 == 0, active: selected?.id == video.id }"
-    v-for="(video, index) in downloadsStore.list" :key="video.id" @click="selected = index">
+    v-for="(video, index) in downloadsStore.list" :key="video.id" @click="selected = video">
     <img src="../assets/empty-list.png" alt="video image">
     <div class="body">
       <h6 class="video-title">{{ video.title || 'Retrieving information' }}</h6>
@@ -14,13 +14,14 @@
       </div>
 
       <div class="d-flex" v-if="video.status == 'postponed'">
-        <div class="bar-item">﹗Downloading is postponed</div>
+        <div class="bar-item"><i class="fa-solid fa-circle-info"></i> Downloading is postponed</div>
       </div>
 
       <div class="d-flex" v-if="video.status == 'inprogress' || video.status == 'paused'">
-        <div class="bar-item">🕑 {{ formatTime(video.length_seconds) }}</div>
-        <div class="bar-item">ᴞ {{ video.size }}</div>
-        <div class="bar-item">⬇
+        <div class="bar-item"><i class="fa-regular fa-clock"></i> {{ formatTime(video.length_seconds) }}</div>
+        <div class="bar-item"><i class="fa-solid fa-ruler-horizontal"></i> {{ video.size }}</div>
+        <div class="bar-item">
+          <i class="fa-solid fa-down-long" :class="{'text-warning': video.status == 'paused'}"></i>
           <div class="progress">
             <div class="progress-bar" role="progressbar" :style="{ width: video.progress + '%' }" aria-valuemin="0"
               aria-valuemax="100"></div>
@@ -29,15 +30,15 @@
       </div>
 
       <div class="d-flex" v-if="video.status == 'downloaded'">
-        <div class="bar-item">🕑 {{ formatTime(video.length_seconds) }}</div>
-        <div class="bar-item">ᴞ {{ video.size }}</div>
-        <div class="bar-item">🎥 {{ video.quality }}</div>
+        <div class="bar-item"><i class="fa-regular fa-clock"></i> {{ formatTime(video.length_seconds) }}</div>
+        <div class="bar-item"><i class="fa-solid fa-ruler-horizontal"></i> {{ video.size }}</div>
+        <div class="bar-item"><i class="fa-brands fa-youtube"></i> {{ video.quality }}</div>
       </div>
 
     </div>
     <div class="actions">
       <div class="close">❌</div>
-      <di class="resume">Resume</di>
+      <div class="resume">Resume</div>
     </div>
   </section>
 </template>
@@ -55,7 +56,7 @@ function formatTime(seconds) {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 section {
   position: relative;
   background-color: transparent;
@@ -90,6 +91,9 @@ section.odd {
   font-size: 12px;
   color: rgb(148, 147, 147);
   font-weight: 500;
+  i {
+    font-size: 15px;
+  }
 }
 
 img {
@@ -130,5 +134,9 @@ img {
 
 section:hover .actions {
   display: block;
+}
+i.fa-down-long {
+  margin-right: 5px;
+font-size: 15px;
 }
 </style>
