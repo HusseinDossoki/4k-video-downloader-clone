@@ -3,8 +3,21 @@
     v-for="(video, index) in downloadsStore.list" :key="video.id" @click="selected = index">
     <img src="../assets/empty-list.png" alt="video image">
     <div class="body">
-      <h6 class="video-title">{{ video.title }}</h6>
-      <div class="d-flex">
+      <h6 class="video-title">{{ video.title || 'Retrieving information' }}</h6>
+
+      <div class="d-flex" v-if="video.status == 'failed'">
+        <small style="font-size: 11px" class="text-danger">Failed</small>
+      </div>
+
+      <div class="d-flex" v-if="video.status == 'new'">
+        <small style="font-size: 11px">Parsing video...</small>
+      </div>
+
+      <div class="d-flex" v-if="video.status == 'postponed'">
+        <div class="bar-item">﹗Downloading is postponed</div>
+      </div>
+
+      <div class="d-flex" v-if="video.status == 'inprogress' || video.status == 'paused'">
         <div class="bar-item">🕑 {{ formatTime(video.length_seconds) }}</div>
         <div class="bar-item">ᴞ {{ video.size }}</div>
         <div class="bar-item">⬇
@@ -14,6 +27,13 @@
           </div>
         </div>
       </div>
+
+      <div class="d-flex" v-if="video.status == 'downloaded'">
+        <div class="bar-item">🕑 {{ formatTime(video.length_seconds) }}</div>
+        <div class="bar-item">ᴞ {{ video.size }}</div>
+        <div class="bar-item">🎥 {{ video.quality }}</div>
+      </div>
+
     </div>
     <div class="actions">
       <div class="close">❌</div>
@@ -29,10 +49,9 @@ const downloadsStore = useDownloadsStore();
 const selected = ref(null);
 
 function formatTime(seconds) {
-  let date = new Date(null);
-  date.setSeconds(seconds);
-  let hhmmssFormat = date.toISOString().substr(11, 8);
-  return hhmmssFormat;
+  // If number of seconds are less than 3600, you can remove hours part and format the string in minutes and seconds.
+  if(seconds < 3600) return new Date(seconds * 1000).toISOString().substr(14, 5);
+  return new Date(seconds * 1000).toISOString().substr(11, 8);
 }
 </script>
 
