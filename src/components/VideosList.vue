@@ -1,6 +1,7 @@
 <template>
-  <section class="d-flex" :class="{ odd: index % 2 == 0, active: selected?.id == video.id }"
-    v-for="(video, index) in downloadsStore.list" :key="video.id" @click="selected = video">
+  <section class="d-flex box" :class="{ odd: index % 2 == 0, active: selected?.id == video.id }"
+    v-for="(video, index) in downloadsStore.list" :key="video.id" @click="selected = video"
+    @contextmenu="onContextMenu($event, video)">
     <img :src="video.thumbnail" :class="{ 'img-err': !video.thumbnail }">
     <div class="body">
       <h6 class="video-title">{{ video.title || 'Retrieving information' }}</h6>
@@ -32,13 +33,14 @@
       <div class="d-flex" v-if="video.status == 'downloaded'">
         <div class="bar-item"><i class="fa-regular fa-clock"></i> {{ formatTime(video.length_seconds) }}</div>
         <div class="bar-item"><i class="fa-solid fa-ruler-horizontal"></i> {{ formatSize(video.size_in_bytes) }}</div>
-        <div class="bar-item"><i class="fa-brands fa-youtube"></i> {{ video.format + ' . ' + video.quality_label }}</div>
+        <div class="bar-item"><i class="fa-brands fa-youtube"></i> {{ video.format + ' . ' + video.quality_label }}
+        </div>
       </div>
 
     </div>
     <div class="actions">
       <div class="close" @click="deleteDownloadItem(video.id)">❌</div>
-      <div class="resume">Resume</div>
+      <div class="resume" v-if="video.status == 'paused'">Resume</div>
     </div>
   </section>
 </template>
@@ -46,6 +48,8 @@
 <script setup>
 import { ref } from "vue";
 import { useDownloadsStore } from "../stores/DownloadsStore";
+import ContextMenu from "@imengyu/vue3-context-menu";
+
 const downloadsStore = useDownloadsStore();
 const selected = ref(null);
 
@@ -79,9 +83,71 @@ function formatSize(sizeInbytes, si = true, dp = 1) {
 async function deleteDownloadItem(id) {
   await downloadsStore.deleteDownloadItem(id);
 }
+function onContextMenu(e, video) {
+  //prevent the browser's default menu
+  e.preventDefault();
+  //show our menu
+  ContextMenu.showContextMenu({
+    theme: 'dark',
+    customClass: 'custom-context-menu',
+    x: e.x,
+    y: e.y,
+    items: [
+      {
+        label: "Play",
+        onClick: () => {
+          alert("You click a menu item");
+        }
+      },
+      {
+        divided: true,
+        label: "Show in Finder",
+        onClick: () => {
+          alert("You click a menu item");
+        }
+      },
+      {
+        divided: true,
+        label: "Copy Link Address",
+        onClick: () => {
+          alert("You click a menu item");
+        }
+      },
+      {
+        label: "Remove",
+        onClick: () => {
+          deleteDownloadItem(video.id);
+        }
+      },
+      {
+        label: "Delete File",
+        onClick: () => {
+          deleteDownloadItem(video.id);
+        }
+      },
+      {
+        label: "Remove All",
+        onClick: () => {
+          alert("You click a menu item");
+        }
+      },
+    ]
+  });
+}
 </script>
 
 <style scoped lang="scss">
+:global(.custom-context-menu) {
+  padding: 0 !important;
+  padding-bottom: 5px !important;
+  padding-top: 5px !important;
+}
+
+:global(.custom-context-menu .mx-context-menu-item) {
+  cursor: pointer !important;
+  padding: 5px !important;
+}
+
 section {
   position: relative;
   background-color: transparent;
