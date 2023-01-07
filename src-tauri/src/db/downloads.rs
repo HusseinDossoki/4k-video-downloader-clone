@@ -1,3 +1,5 @@
+use std::cmp::Reverse;
+
 use crate::db::establish_connection;
 use crate::db::models;
 use crate::schema::*;
@@ -11,7 +13,11 @@ pub fn get_downloads() -> Result<Vec<models::DownloadItem>, String> {
         return Err("Error when fetching the 'downloads' from the database".to_string());
     }
 
-    return Ok(result.unwrap());
+    // Order desc by id
+    let mut ordered = result.unwrap();
+    ordered.sort_by_key(|x| Reverse(x.id));
+
+    return Ok(ordered);
 }
 
 pub fn add_download_item(url: String, directory: String) -> Result<(), String> {
