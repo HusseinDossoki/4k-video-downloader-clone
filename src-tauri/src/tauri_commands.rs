@@ -1,4 +1,5 @@
 use crate::db::{downloads, models, preferences, smart_mode};
+use crate::youtube_downloader::downloader;
 use tauri::Window;
 
 #[tauri::command]
@@ -40,12 +41,20 @@ pub fn get_downloads() -> Result<Vec<models::DownloadItem>, String> {
 }
 
 #[tauri::command]
-pub fn download_new_video(url: String, directory: String, window: Window) -> Result<i32, String> {
-    let result = downloads::add_download_item(url, directory);
+pub async fn download_new_video(
+    url: String,
+    directory: String,
+    window: Window,
+) -> Result<i32, String> {
+    let insert_result = downloads::add_download_item(url.clone(), directory.clone());
 
-    if result.is_ok() {
+    if insert_result.is_ok() {
         window.emit("downloads-changed", true).unwrap();
     }
 
-    return result;
+    let video_info = downloader::get_video_info(url.clone()).await;
+
+    println!("{:#?}", video_info);
+
+    return insert_result;
 }

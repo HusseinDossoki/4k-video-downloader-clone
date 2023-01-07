@@ -9,7 +9,7 @@ extern crate diesel;
 extern crate diesel_migrations;
 embed_migrations!("./migrations");
 pub mod db;
-pub mod downloader;
+pub mod youtube_downloader;
 pub mod schema;
 mod tauri_commands;
 use tauri_commands as commands;
