@@ -48,6 +48,7 @@ pub struct DownloadItem {
     pub size_in_bytes: i32,
     pub format: String,
     pub quality: String,
+    pub quality_label: String,
     pub progress: i32,
     pub status: String,
     pub url: String,
@@ -70,4 +71,13 @@ pub struct UpdateDownloadItemInfo {
     pub title: String,
     pub thumbnail: String,
     pub length_seconds: i32,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct UpdateDownloadItemFullInfo {
+    pub id: i32,
+    pub size_in_bytes: i32,
+    pub format: String,
+    pub quality: String,
+    pub quality_label: String,
 }

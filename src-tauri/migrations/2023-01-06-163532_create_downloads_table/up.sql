@@ -8,6 +8,7 @@ CREATE TABLE
     size_in_bytes INTEGER NOT NULL DEFAULT 0,
     format VARCHAR NOT NULL DEFAULT '',
     quality VARCHAR NOT NULL DEFAULT '',
+    quality_label VARCHAR NOT NULL DEFAULT '',
     progress INTEGER NOT NULL DEFAULT 0,
     status VARCHAR NOT NULL DEFAULT 'new', /* new, inprogress, paused, postponed, failed, downloaded */
     url VARCHAR NOT NULL,

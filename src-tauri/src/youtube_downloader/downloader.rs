@@ -1,8 +1,8 @@
-use crate::db::downloads;
+use crate::db;
 use rustube::{
     url::Url,
     video_info::player_response::streaming_data::{Quality, QualityLabel},
-    Id, Video, VideoDescrambler, VideoFetcher, VideoInfo,
+    Id, Video, VideoDescrambler, VideoFetcher,
 };
 use tauri::Window;
 
@@ -56,13 +56,21 @@ pub async fn download_youtube_video(
 
     match stream {
         Some(data) => {
-            let size_in_bytes = data.content_length().await.unwrap();
-            downloads::set_file_size(&db_id, size_in_bytes).unwrap();
+            // Update info in db
+            let params = db::models::UpdateDownloadItemFullInfo {
+                id: db_id.clone(),
+                format: data.mime.to_string().clone(),
+                quality: quality_string(&data.quality),
+                quality_label: quality_label_string(&data.quality_label.unwrap()),
+                size_in_bytes: data.content_length().await.unwrap() as i32,
+            };
+
+            db::downloads::update_video_full_info(params.clone()).unwrap();
             window.emit("downloads-changed", true).unwrap();
 
             let file_path = format!("{}/{}.mp4", directory, title);
             data.download_to(file_path).await.unwrap();
-            downloads::download_completed(&db_id).unwrap();
+            db::downloads::download_completed(&db_id).unwrap();
             window.emit("downloads-changed", true).unwrap();
         }
         None => todo!(),
@@ -77,4 +85,13 @@ pub async fn download_youtube_video(
     //     .download()
     //     .await
     //     .unwrap();
+}
+
+fn quality_string(val: &Quality) -> String {
+    let serilazed = serde_json::to_string(val).unwrap().clone();
+    return serde_json::from_str::<String>(&serilazed).unwrap();
+}
+fn quality_label_string(val: &QualityLabel) -> String {
+    let serilazed = serde_json::to_string(val).unwrap().clone();
+    return serde_json::from_str::<String>(&serilazed).unwrap();
 }

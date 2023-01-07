@@ -9,6 +9,7 @@ diesel::table! {
         size_in_bytes -> Integer,
         format -> Text,
         quality -> Text,
+        quality_label -> Text,
         progress -> Integer,
         status -> Text,
         url -> Text,

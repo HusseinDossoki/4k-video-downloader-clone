@@ -79,6 +79,34 @@ pub fn update_video_info(
     return Ok(updated);
 }
 
+pub fn update_video_full_info(
+    params: models::UpdateDownloadItemFullInfo,
+) -> Result<models::DownloadItem, String> {
+    let conn = establish_connection();
+
+    use downloads::dsl::{format, id, quality, quality_label, size_in_bytes};
+
+    let res = diesel::update(downloads::dsl::downloads.filter(id.eq(&params.id)))
+        .set((
+            quality.eq(params.quality),
+            quality_label.eq(params.quality_label),
+            size_in_bytes.eq(params.size_in_bytes),
+            format.eq(params.format),
+        ))
+        .execute(&conn);
+
+    if res.is_err() {
+        return Err("Error when updating 'video full info' in the database".to_string());
+    }
+
+    let updated = downloads::dsl::downloads
+        .filter(id.eq(&params.id))
+        .first::<models::DownloadItem>(&conn)
+        .expect("'video' not found");
+
+    return Ok(updated);
+}
+
 pub fn delete_download_item(qid: i32) -> Result<(), String> {
     let conn = establish_connection();
 
@@ -105,24 +133,6 @@ pub fn download_completed(qid: &i32) -> Result<(), String> {
     if res.is_err() {
         return Err(
             "Error when updating 'video' status to 'downloaded' in the database".to_string(),
-        );
-    }
-
-    return Ok(());
-}
-
-pub fn set_file_size(qid: &i32, qsize_in_bytes: u64) -> Result<(), String> {
-    let conn = establish_connection();
-
-    use downloads::dsl::{id, size_in_bytes};
-
-    let res = diesel::update(downloads::dsl::downloads.filter(id.eq(&qid)))
-        .set(size_in_bytes.eq(qsize_in_bytes as i32))
-        .execute(&conn);
-
-    if res.is_err() {
-        return Err(
-            "Error when updating 'video' file size to 'downloaded' in the database".to_string(),
         );
     }
 
