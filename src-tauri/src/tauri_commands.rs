@@ -44,9 +44,7 @@ pub fn download_new_video(url: String, directory: String, window: Window) -> Res
     let result = downloads::add_download_item(url, directory);
 
     if result.is_ok() {
-        // window
-        //     .emit("downloads-changed", result.clone().unwrap())
-        //     .unwrap();
+        window.emit("downloads-changed", true).unwrap();
     }
 
     return result;

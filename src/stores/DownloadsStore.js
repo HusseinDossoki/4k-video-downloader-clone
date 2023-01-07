@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { invoke } from "@tauri-apps/api/tauri";
+import { appWindow } from '@tauri-apps/api/window';
 
 /**
  * We need a way to watch the state and then update them in db.
@@ -52,6 +53,11 @@ export const useDownloadsStore = new Proxy(useDownloadsStoreFactory, {
     if (!store) {
       store = target.apply(thisArg, argumentsList);
       store.init();
+
+      // listen for event to reload the download list
+      const unlisten = appWindow.listen('downloads-changed', (event) => {
+        store.init();
+      });
     }
 
     return store;
