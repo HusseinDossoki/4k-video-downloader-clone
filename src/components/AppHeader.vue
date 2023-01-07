@@ -71,7 +71,7 @@ async function download() {
       url: copiedUrl.value,
       directory: smartModeStore.directory
     }).then(res => {
-      console.log('Video added ..');
+      console.log('Video added: New Id => ', res);
     }).catch(err => {
       console.log(err);
     });

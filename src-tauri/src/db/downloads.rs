@@ -20,7 +20,7 @@ pub fn get_downloads() -> Result<Vec<models::DownloadItem>, String> {
     return Ok(ordered);
 }
 
-pub fn add_download_item(url: String, directory: String) -> Result<(), String> {
+pub fn add_download_item(url: String, directory: String) -> Result<i32, String> {
     let conn = establish_connection();
 
     let new_download = models::NewDownloadItem { url, directory };
@@ -33,5 +33,20 @@ pub fn add_download_item(url: String, directory: String) -> Result<(), String> {
         return Err("Error saving new download item".to_string());
     }
 
-    return Ok(());
+    /*
+     * Return the new id 
+     * Note that if the sqlite file is opened by another process, it may cause a database lock error
+     */
+    no_arg_sql_function!(
+        last_insert_rowid,
+        diesel::sql_types::Integer,
+        "Represents the SQL last_insert_row() function"
+    );
+
+    let new_id_res = diesel::select(last_insert_rowid).get_result::<i32>(&conn);
+    if new_id_res.is_err() {
+        return Err("Error when fetching the last_insert_rowid".to_string());
+    }
+
+    return Ok(new_id_res.unwrap());
 }

@@ -40,7 +40,7 @@ pub fn get_downloads() -> Result<Vec<models::DownloadItem>, String> {
 }
 
 #[tauri::command]
-pub fn download_new_video(url: String, directory: String, window: Window) -> Result<(), String> {
+pub fn download_new_video(url: String, directory: String, window: Window) -> Result<i32, String> {
     let result = downloads::add_download_item(url, directory);
 
     if result.is_ok() {
