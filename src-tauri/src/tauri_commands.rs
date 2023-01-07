@@ -1,6 +1,6 @@
 use crate::db::{downloads, models, preferences, smart_mode};
-use crate::youtube_downloader::downloader;
 use crate::file_system::file_system;
+use crate::youtube_downloader::downloader;
 use tauri::Window;
 
 #[tauri::command]
@@ -73,7 +73,14 @@ pub async fn download_new_video(
     }
 
     let new_video = update_result.unwrap();
-    downloader::download_youtube_video(&new_video.id, &new_video.url, &new_video.directory, &new_video.title.unwrap(), window).await;
+    downloader::download_youtube_video(
+        &new_video.id,
+        &new_video.url,
+        &new_video.directory,
+        &new_video.title.unwrap(),
+        window,
+    )
+    .await;
 
     return insert_result;
 }
@@ -87,4 +94,12 @@ pub async fn delete_download_item(id: i32, window: Window) -> Result<(), String>
     }
 
     return result;
+}
+
+#[tauri::command]
+pub async fn remove_all_downloads(window: Window) {
+    let result = downloads::remove_all_downloads();
+    if result.is_ok() {
+        window.emit("downloads-changed", true).unwrap();
+    }
 }

@@ -130,7 +130,7 @@ function onContextMenu(e, video) {
       {
         label: "Remove All",
         onClick: () => {
-          alert("You click a menu item");
+          invoke("remove_all_downloads");
         }
       },
     ]

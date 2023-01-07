@@ -121,6 +121,18 @@ pub fn delete_download_item(qid: i32) -> Result<(), String> {
     return Ok(());
 }
 
+pub fn remove_all_downloads() -> Result<(), String> {
+    let conn = establish_connection();
+
+    let res = diesel::sql_query("DELETE FROM downloads").execute(&conn);
+
+    if res.is_err() {
+        return Err("Error when deleting 'all videos' from the database".to_string());
+    }
+
+    return Ok(());
+}
+
 pub fn download_completed(qid: &i32) -> Result<(), String> {
     let conn = establish_connection();
 

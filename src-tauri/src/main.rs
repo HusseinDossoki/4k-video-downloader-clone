@@ -31,6 +31,7 @@ fn main() {
             commands::download_new_video,
             commands::delete_download_item,
             commands::show_in_folder,
+            commands::remove_all_downloads,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
