@@ -82,7 +82,7 @@ async function download() {
 setInterval(() => {
   readText()
     .then(res => {
-      validYoutubeUrl.value = res?.includes('youtube.com/watch');
+      validYoutubeUrl.value = res?.includes('youtube.com/watch') || res?.includes('youtube.com/shorts');
       copiedUrl.value = res;
     });
 }, 1000);

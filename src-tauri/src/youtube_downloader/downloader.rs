@@ -34,7 +34,7 @@ pub async fn get_video_info(url: String) -> models::YoutubeVideoInfo {
     };
 }
 
-pub async fn download_youtube_video(video_url: &String) {
+pub async fn download_youtube_video(video_url: &String, directory: &String) {
     let url = Url::parse(video_url).unwrap();
     let fetcher: VideoFetcher = VideoFetcher::from_url(&url).unwrap();
     let descrambler: VideoDescrambler = fetcher.fetch().await.unwrap();
@@ -48,7 +48,7 @@ pub async fn download_youtube_video(video_url: &String) {
 
     match video_path {
         Some(data) => {
-            data.download_to_dir(get_download_dir()).await.unwrap();
+            data.download_to_dir(directory).await.unwrap();
         }
         None => todo!(),
     }
@@ -62,8 +62,4 @@ pub async fn download_youtube_video(video_url: &String) {
     //     .download()
     //     .await
     //     .unwrap();
-}
-
-fn get_download_dir() -> String {
-    return String::from(".");
 }
