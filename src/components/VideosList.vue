@@ -19,7 +19,7 @@
 
       <div class="d-flex" v-if="video.status == 'inprogress' || video.status == 'paused'">
         <div class="bar-item"><i class="fa-regular fa-clock"></i> {{ formatTime(video.length_seconds) }}</div>
-        <div class="bar-item"><i class="fa-solid fa-ruler-horizontal"></i> {{ video.size }}</div>
+        <div class="bar-item"><i class="fa-solid fa-ruler-horizontal"></i> {{ formatSize(video.size_in_bytes) }}</div>
         <div class="bar-item">
           <i class="fa-solid fa-down-long" :class="{ 'text-warning': video.status == 'paused' }"></i>
           <div class="progress">
@@ -31,7 +31,7 @@
 
       <div class="d-flex" v-if="video.status == 'downloaded'">
         <div class="bar-item"><i class="fa-regular fa-clock"></i> {{ formatTime(video.length_seconds) }}</div>
-        <div class="bar-item"><i class="fa-solid fa-ruler-horizontal"></i> {{ video.size }}</div>
+        <div class="bar-item"><i class="fa-solid fa-ruler-horizontal"></i> {{ formatSize(video.size_in_bytes) }}</div>
         <div class="bar-item"><i class="fa-brands fa-youtube"></i> {{ video.quality }}</div>
       </div>
 
@@ -53,6 +53,27 @@ function formatTime(seconds) {
   // If number of seconds are less than 3600, you can remove hours part and format the string in minutes and seconds.
   if (seconds < 3600) return new Date(seconds * 1000).toISOString().substr(14, 5);
   return new Date(seconds * 1000).toISOString().substr(11, 8);
+}
+function formatSize(sizeInbytes, si = true, dp = 1) {
+  const thresh = si ? 1000 : 1024;
+
+  if (Math.abs(sizeInbytes) < thresh) {
+    return sizeInbytes + ' B';
+  }
+
+  const units = si
+    ? ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+    : ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
+  let u = -1;
+  const r = 10 ** dp;
+
+  do {
+    sizeInbytes /= thresh;
+    ++u;
+  } while (Math.round(Math.abs(sizeInbytes) * r) / r >= thresh && u < units.length - 1);
+
+
+  return sizeInbytes.toFixed(dp) + ' ' + units[u];
 }
 
 async function deleteDownloadItem(id) {

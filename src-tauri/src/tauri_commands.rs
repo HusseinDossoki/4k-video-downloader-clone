@@ -67,7 +67,7 @@ pub async fn download_new_video(
     }
 
     let new_video = update_result.unwrap();
-    downloader::download_youtube_video(&new_video.url, &new_video.directory, &new_video.title.unwrap()).await;
+    downloader::download_youtube_video(&new_video.id, &new_video.url, &new_video.directory, &new_video.title.unwrap(), window).await;
 
     return insert_result;
 }

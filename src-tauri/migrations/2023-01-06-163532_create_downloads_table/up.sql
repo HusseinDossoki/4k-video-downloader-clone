@@ -5,7 +5,7 @@ CREATE TABLE
     title VARCHAR NULL,
     thumbnail VARCHAR NULL,
     length_seconds INTEGER NOT NULL DEFAULT 0,
-    size VARCHAR NOT NULL DEFAULT '',
+    size_in_bytes INTEGER NOT NULL DEFAULT 0,
     format VARCHAR NOT NULL DEFAULT '',
     quality VARCHAR NOT NULL DEFAULT '',
     progress INTEGER NOT NULL DEFAULT 0,

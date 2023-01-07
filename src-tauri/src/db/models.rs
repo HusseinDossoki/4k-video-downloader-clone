@@ -45,7 +45,7 @@ pub struct DownloadItem {
     pub title: Option<String>,
     pub thumbnail: Option<String>,
     pub length_seconds: i32,
-    pub size: String,
+    pub size_in_bytes: i32,
     pub format: String,
     pub quality: String,
     pub progress: i32,

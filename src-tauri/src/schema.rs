@@ -6,7 +6,7 @@ diesel::table! {
         title -> Nullable<Text>,
         thumbnail -> Nullable<Text>,
         length_seconds -> Integer,
-        size -> Text,
+        size_in_bytes -> Integer,
         format -> Text,
         quality -> Text,
         progress -> Integer,
