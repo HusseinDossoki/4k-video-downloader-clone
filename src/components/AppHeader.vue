@@ -6,12 +6,12 @@
         <p class="link-text">Past Link</p>
         <i v-if="validYoutubeUrl" class="fa-brands fa-youtube"></i>
       </div>
-      <div class="link smart-mode" @click="openSmartMode()">
+      <div class="link smart-mode" @click="openSmartMode">
         <p class="link-icon"><i class="fa-regular fa-lightbulb text-secondary"
             :class="{ 'text-warning': smartModeStore.enabled }"></i></p>
         <p class="link-text">Smart Mode</p>
       </div>
-      <div class="link preferences" @click="openPreferences()">
+      <div class="link preferences" @click="openPreferences">
         <p class="link-icon"><i class="fa-solid fa-screwdriver-wrench"></i></p>
         <p class="link-text">Preferences</p>
       </div>
@@ -29,7 +29,7 @@ const validYoutubeUrl = ref(false);
 const copiedUrl = ref(null);
 const smartModeStore = useSmartModeStore();
 
-function openSmartMode() {
+async function openSmartMode() {
   const webview = new WebviewWindow("SmartMode", {
     url: '/smart-mode',
     title: "Smart Mode",
@@ -38,6 +38,11 @@ function openSmartMode() {
     height: 380,
     center: true,
     focus: true,
+  });
+
+
+  const unlisten = await webview.listen('smart-mode-changed', (event) => {
+    smartModeStore.refreshState(event.payload);
   });
 }
 

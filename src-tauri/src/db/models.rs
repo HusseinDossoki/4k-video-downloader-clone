@@ -1,6 +1,6 @@
 use serde::{Serialize, Deserialize};
 
-#[derive(Queryable, Serialize, Deserialize, Debug)]
+#[derive(Queryable, Serialize, Deserialize, Debug, Clone)]
 pub struct SmartMode {
     pub id: i32,
     pub enabled: bool,

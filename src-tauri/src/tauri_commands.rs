@@ -1,4 +1,5 @@
 use crate::db::{downloads, models, preferences, smart_mode};
+use tauri::Window;
 
 #[tauri::command]
 pub fn get_smart_mode() -> Result<models::SmartMode, String> {
@@ -6,8 +7,19 @@ pub fn get_smart_mode() -> Result<models::SmartMode, String> {
 }
 
 #[tauri::command]
-pub fn update_smart_mode(params: models::UpdateSmartMode) -> Result<models::SmartMode, String> {
-    return smart_mode::update_smart_mode(params);
+pub fn update_smart_mode(
+    params: models::UpdateSmartMode,
+    window: Window,
+) -> Result<models::SmartMode, String> {
+    let result = smart_mode::update_smart_mode(params);
+
+    if result.is_ok() {
+        window
+            .emit("smart-mode-changed", result.clone().unwrap())
+            .unwrap();
+    }
+
+    return result;
 }
 
 #[tauri::command]

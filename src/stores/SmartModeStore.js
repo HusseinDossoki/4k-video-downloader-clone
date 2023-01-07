@@ -75,6 +75,13 @@ const useSmartModeStoreFactory = defineStore("smartModeStore", {
           this.loading = false;
         });
     },
+    refreshState(newState) {
+      this.id = newState.id;
+      this.enabled = newState.enabled;
+      this.format = newState.format;
+      this.quality = newState.quality;
+      this.directory = newState.directory;
+    }
   }
 });
 
