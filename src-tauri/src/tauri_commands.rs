@@ -1,6 +1,12 @@
 use crate::db::{downloads, models, preferences, smart_mode};
 use crate::youtube_downloader::downloader;
+use crate::file_system::file_system;
 use tauri::Window;
+
+#[tauri::command]
+pub fn show_in_folder(path: String) {
+    file_system::show_in_folder(path);
+}
 
 #[tauri::command]
 pub fn get_smart_mode() -> Result<models::SmartMode, String> {

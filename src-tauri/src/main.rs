@@ -9,9 +9,10 @@ extern crate diesel;
 extern crate diesel_migrations;
 embed_migrations!("./migrations");
 pub mod db;
-pub mod youtube_downloader;
+pub mod file_system;
 pub mod schema;
 mod tauri_commands;
+pub mod youtube_downloader;
 use tauri_commands as commands;
 
 fn main() {
@@ -29,6 +30,7 @@ fn main() {
             commands::get_downloads,
             commands::download_new_video,
             commands::delete_download_item,
+            commands::show_in_folder,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
