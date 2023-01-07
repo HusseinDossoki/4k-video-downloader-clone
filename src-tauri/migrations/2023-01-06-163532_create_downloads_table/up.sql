@@ -3,7 +3,7 @@ CREATE TABLE
   downloads (
     id INTEGER NOT NULL PRIMARY KEY,
     title VARCHAR NULL,
-    short_description TEXT NULL,
+    thumbnail VARCHAR NULL,
     length_seconds INTEGER NOT NULL DEFAULT 0,
     size VARCHAR NOT NULL DEFAULT '',
     format VARCHAR NOT NULL DEFAULT '',

@@ -1,7 +1,7 @@
 <template>
   <section class="d-flex" :class="{ odd: index % 2 == 0, active: selected?.id == video.id }"
     v-for="(video, index) in downloadsStore.list" :key="video.id" @click="selected = video">
-    <img src="../assets/empty-list.png" alt="video image">
+    <img :src="video.thumbnail" :class="{'img-err': !video.thumbnail}">
     <div class="body">
       <h6 class="video-title">{{ video.title || 'Retrieving information' }}</h6>
 
@@ -138,5 +138,9 @@ section:hover .actions {
 i.fa-down-long {
   margin-right: 5px;
 font-size: 15px;
+}
+
+.img-err {
+  background-color: #ddd;
 }
 </style>

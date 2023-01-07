@@ -53,8 +53,18 @@ pub async fn download_new_video(
     }
 
     let video_info = downloader::get_video_info(url.clone()).await;
+    let update_video_info_params = models::UpdateDownloadItemInfo {
+        id: insert_result.clone().unwrap(),
+        title: video_info.title.clone(),
+        thumbnail: video_info.thumbnail.clone(),
+        length_seconds: video_info.length_seconds.clone() as i32,
+    };
 
-    println!("{:#?}", video_info);
+    let update_result = downloads::update_video_info(update_video_info_params);
+
+    if update_result.is_ok() {
+        window.emit("downloads-changed", true).unwrap();
+    }
 
     return insert_result;
 }

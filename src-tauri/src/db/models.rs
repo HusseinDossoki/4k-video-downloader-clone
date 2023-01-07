@@ -43,7 +43,7 @@ pub struct UpdateGeneralPreferences {
 pub struct DownloadItem {
     pub id: i32,
     pub title: Option<String>,
-    pub short_description: Option<String>,
+    pub thumbnail: Option<String>,
     pub length_seconds: i32,
     pub size: String,
     pub format: String,
@@ -62,4 +62,12 @@ pub struct DownloadItem {
 pub struct NewDownloadItem {  // this struct will be use when inserting into the db, a struct can be Queryable and Insertable at the same time too. 
     pub url: String,
     pub directory: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct UpdateDownloadItemInfo {
+    pub id: i32,
+    pub title: String,
+    pub thumbnail: String,
+    pub length_seconds: i32,
 }

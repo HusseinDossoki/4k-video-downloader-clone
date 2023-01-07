@@ -1,9 +1,9 @@
-use std::cmp::Reverse;
-
 use crate::db::establish_connection;
 use crate::db::models;
 use crate::schema::*;
-use diesel::RunQueryDsl;
+use diesel::prelude::*;
+use diesel::{QueryDsl, RunQueryDsl};
+use std::cmp::Reverse;
 
 pub fn get_downloads() -> Result<Vec<models::DownloadItem>, String> {
     let conn = establish_connection();
@@ -34,7 +34,7 @@ pub fn add_download_item(url: String, directory: String) -> Result<i32, String> 
     }
 
     /*
-     * Return the new id 
+     * Return the new id
      * Note that if the sqlite file is opened by another process, it may cause a database lock error
      */
     no_arg_sql_function!(
@@ -49,4 +49,32 @@ pub fn add_download_item(url: String, directory: String) -> Result<i32, String> 
     }
 
     return Ok(new_id_res.unwrap());
+}
+
+pub fn update_video_info(
+    params: models::UpdateDownloadItemInfo,
+) -> Result<models::DownloadItem, String> {
+    let conn = establish_connection();
+
+    use downloads::dsl::{id, length_seconds, thumbnail, title, status};
+
+    let res = diesel::update(downloads::dsl::downloads.filter(id.eq(&params.id)))
+        .set((
+            title.eq(params.title),
+            thumbnail.eq(params.thumbnail),
+            length_seconds.eq(params.length_seconds),
+            status.eq("inprogress"),
+        ))
+        .execute(&conn);
+
+    if res.is_err() {
+        return Err("Error when updating 'video info' in the database".to_string());
+    }
+
+    let updated = downloads::dsl::downloads
+        .filter(id.eq(&params.id))
+        .first::<models::DownloadItem>(&conn)
+        .expect("'video' not found");
+
+    return Ok(updated);
 }
