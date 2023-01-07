@@ -1,7 +1,7 @@
 <template>
   <section class="d-flex" :class="{ odd: index % 2 == 0, active: selected?.id == video.id }"
     v-for="(video, index) in downloadsStore.list" :key="video.id" @click="selected = video">
-    <img :src="video.thumbnail" :class="{'img-err': !video.thumbnail}">
+    <img :src="video.thumbnail" :class="{ 'img-err': !video.thumbnail }">
     <div class="body">
       <h6 class="video-title">{{ video.title || 'Retrieving information' }}</h6>
 
@@ -21,7 +21,7 @@
         <div class="bar-item"><i class="fa-regular fa-clock"></i> {{ formatTime(video.length_seconds) }}</div>
         <div class="bar-item"><i class="fa-solid fa-ruler-horizontal"></i> {{ video.size }}</div>
         <div class="bar-item">
-          <i class="fa-solid fa-down-long" :class="{'text-warning': video.status == 'paused'}"></i>
+          <i class="fa-solid fa-down-long" :class="{ 'text-warning': video.status == 'paused' }"></i>
           <div class="progress">
             <div class="progress-bar" role="progressbar" :style="{ width: video.progress + '%' }" aria-valuemin="0"
               aria-valuemax="100"></div>
@@ -37,7 +37,7 @@
 
     </div>
     <div class="actions">
-      <div class="close">❌</div>
+      <div class="close" @click="deleteDownloadItem(video.id)">❌</div>
       <div class="resume">Resume</div>
     </div>
   </section>
@@ -51,8 +51,12 @@ const selected = ref(null);
 
 function formatTime(seconds) {
   // If number of seconds are less than 3600, you can remove hours part and format the string in minutes and seconds.
-  if(seconds < 3600) return new Date(seconds * 1000).toISOString().substr(14, 5);
+  if (seconds < 3600) return new Date(seconds * 1000).toISOString().substr(14, 5);
   return new Date(seconds * 1000).toISOString().substr(11, 8);
+}
+
+async function deleteDownloadItem(id) {
+  await downloadsStore.deleteDownloadItem(id);
 }
 </script>
 
@@ -91,6 +95,7 @@ section.odd {
   font-size: 12px;
   color: rgb(148, 147, 147);
   font-weight: 500;
+
   i {
     font-size: 15px;
   }
@@ -135,9 +140,10 @@ img {
 section:hover .actions {
   display: block;
 }
+
 i.fa-down-long {
   margin-right: 5px;
-font-size: 15px;
+  font-size: 15px;
 }
 
 .img-err {

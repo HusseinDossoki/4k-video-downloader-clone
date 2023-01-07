@@ -56,7 +56,7 @@ pub fn update_video_info(
 ) -> Result<models::DownloadItem, String> {
     let conn = establish_connection();
 
-    use downloads::dsl::{id, length_seconds, thumbnail, title, status};
+    use downloads::dsl::{id, length_seconds, status, thumbnail, title};
 
     let res = diesel::update(downloads::dsl::downloads.filter(id.eq(&params.id)))
         .set((
@@ -77,4 +77,18 @@ pub fn update_video_info(
         .expect("'video' not found");
 
     return Ok(updated);
+}
+
+pub fn delete_download_item(qid: i32) -> Result<(), String> {
+    let conn = establish_connection();
+
+    use downloads::dsl::id;
+
+    let res = diesel::delete(downloads::dsl::downloads.filter(id.eq(&qid))).execute(&conn);
+
+    if res.is_err() {
+        return Err("Error when deleting 'video' from the database".to_string());
+    }
+
+    return Ok(());
 }

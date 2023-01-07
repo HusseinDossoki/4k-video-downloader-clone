@@ -43,6 +43,23 @@ const useDownloadsStoreFactory = defineStore("downloadsStore", {
           this.loading = false;
         });
     },
+    async deleteDownloadItem(id) {
+      this.loading = true;
+      this.errors = [];
+
+      return invoke("delete_download_item", { id: id })
+        .then(res => {
+          this.loading = false;
+        })
+        .catch(err => {
+          function onlyUnique(value, index, self) {
+            return self.indexOf(value) === index;
+          }
+          this.errors.push(err);
+          this.errors = this.errors.filter(x => onlyUnique);
+          this.loading = false;
+        });
+    },
   }
 });
 

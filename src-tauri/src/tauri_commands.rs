@@ -68,3 +68,14 @@ pub async fn download_new_video(
 
     return insert_result;
 }
+
+#[tauri::command]
+pub async fn delete_download_item(id: i32, window: Window) -> Result<(), String> {
+    let result = downloads::delete_download_item(id);
+
+    if result.is_ok() {
+        window.emit("downloads-changed", true).unwrap();
+    }
+
+    return result;
+}

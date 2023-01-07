@@ -28,6 +28,7 @@ fn main() {
             commands::update_general_preferences,
             commands::get_downloads,
             commands::download_new_video,
+            commands::delete_download_item,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
