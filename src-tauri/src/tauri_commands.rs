@@ -38,3 +38,16 @@ pub fn update_general_preferences(
 pub fn get_downloads() -> Result<Vec<models::DownloadItem>, String> {
     return downloads::get_downloads();
 }
+
+#[tauri::command]
+pub fn download_new_video(url: String, directory: String, window: Window) -> Result<(), String> {
+    let result = downloads::add_download_item(url, directory);
+
+    if result.is_ok() {
+        // window
+        //     .emit("downloads-changed", result.clone().unwrap())
+        //     .unwrap();
+    }
+
+    return result;
+}

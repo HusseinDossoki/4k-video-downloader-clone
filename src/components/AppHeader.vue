@@ -24,6 +24,7 @@ import { ref } from "vue";
 import { useSmartModeStore } from "../stores/SmartModeStore";
 import { WebviewWindow } from "@tauri-apps/api/window";
 import { readText } from '@tauri-apps/api/clipboard';
+import { invoke } from "@tauri-apps/api/tauri";
 
 const validYoutubeUrl = ref(false);
 const copiedUrl = ref(null);
@@ -58,8 +59,23 @@ function openPreferences() {
   });
 }
 
-function download() {
+async function download() {
   if (!validYoutubeUrl.value) return;
+  if (!smartModeStore.enabled) {
+    // Open the custom download window
+    return;
+  }
+
+  invoke("download_new_video",
+    {
+      url: copiedUrl.value,
+      directory: smartModeStore.directory
+    }).then(res => {
+      console.log('Video added ..');
+    }).catch(err => {
+      console.log(err);
+    });
+
   console.log(copiedUrl.value);
 }
 

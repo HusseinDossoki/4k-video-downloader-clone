@@ -27,6 +27,7 @@ fn main() {
             commands::get_general_preferences,
             commands::update_general_preferences,
             commands::get_downloads,
+            commands::download_new_video,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -2,7 +2,7 @@
 CREATE TABLE
   downloads (
     id INTEGER NOT NULL PRIMARY KEY,
-    title VARCHAR NOT NULL DEFAULT '',
+    title VARCHAR NULL,
     short_description TEXT NULL,
     length_seconds INTEGER NOT NULL DEFAULT 0,
     size VARCHAR NOT NULL DEFAULT '',

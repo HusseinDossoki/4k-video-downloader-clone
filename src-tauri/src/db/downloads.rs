@@ -1,8 +1,7 @@
 use crate::db::establish_connection;
 use crate::db::models;
 use crate::schema::*;
-use diesel::prelude::*;
-use diesel::{QueryDsl, RunQueryDsl};
+use diesel::RunQueryDsl;
 
 pub fn get_downloads() -> Result<Vec<models::DownloadItem>, String> {
     let conn = establish_connection();
@@ -13,4 +12,20 @@ pub fn get_downloads() -> Result<Vec<models::DownloadItem>, String> {
     }
 
     return Ok(result.unwrap());
+}
+
+pub fn add_download_item(url: String, directory: String) -> Result<(), String> {
+    let conn = establish_connection();
+
+    let new_download = models::NewDownloadItem { url, directory };
+
+    let result = diesel::insert_into(downloads::table)
+        .values(&new_download)
+        .execute(&conn);
+
+    if result.is_err() {
+        return Err("Error saving new download item".to_string());
+    }
+
+    return Ok(());
 }

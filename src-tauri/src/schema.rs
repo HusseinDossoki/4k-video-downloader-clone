@@ -3,7 +3,7 @@
 diesel::table! {
     downloads (id) {
         id -> Integer,
-        title -> Text,
+        title -> Nullable<Text>,
         short_description -> Nullable<Text>,
         length_seconds -> Integer,
         size -> Text,
