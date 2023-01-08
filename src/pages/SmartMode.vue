@@ -18,7 +18,7 @@
         </div>
         <div class="col-10">
           <select class="w-100" v-model="format" :disabled="!smartModeEnabled">
-            <option :value="format.title" v-for="format in formats">{{ format.title }}</option>
+            <option :value="opt" v-for="opt in smartModeStore.lookups.formats">{{ opt }}</option>
           </select>
         </div>
       </div>
@@ -29,7 +29,7 @@
         </div>
         <div class="col-10">
           <select class="w-100" v-model="quality" :disabled="!smartModeEnabled">
-            <option :value="quality.title" v-for="quality in qualities">{{ quality.title }}</option>
+            <option :value="opt" v-for="opt in qualities">{{ opt }}</option>
           </select>
           <small class="d-block mt-1">Some videos may not be available in the selected quality. In such cases, the
             videos
@@ -65,112 +65,24 @@ import { useSmartModeStore } from "../stores/SmartModeStore";
 
 const smartModeStore = useSmartModeStore();
 
-const formats = ref([
-  {
-    title: 'Any Video',
-    type: 'video',
-  },
-  {
-    title: 'MP4 . Video',
-    type: 'video',
-  },
-  {
-    title: 'MKV . Video',
-    type: 'video',
-  },
-  {
-    title: 'MP3 . Audio',
-    type: 'audio',
-  },
-  {
-    title: 'M4A . Audio',
-    type: 'audio',
-  },
-  {
-    title: 'OGG . Audio',
-    type: 'audio',
-  }
-]);
-const qualities = ref([
-  {
-    title: 'Best Quality',
-    type: 'all'
-  },
-  {
-    title: '8K 60fps',
-    type: 'vidoe'
-  },
-  {
-    title: '8K',
-    type: 'vidoe'
-  },
-  {
-    title: '4K 60fps',
-    type: 'vidoe'
-  },
-  {
-    title: '4K',
-    type: 'vidoe'
-  },
-  {
-    title: '2K 60fps',
-    type: 'vidoe'
-  },
-  {
-    title: '2K',
-    type: 'vidoe'
-  },
-  {
-    title: '1080p 60fps',
-    type: 'vidoe'
-  },
-  {
-    title: '1080p',
-    type: 'vidoe'
-  },
-  {
-    title: '720p 60fps',
-    type: 'vidoe'
-  },
-  {
-    title: '720p',
-    type: 'vidoe'
-  },
-  {
-    title: '480p',
-    type: 'vidoe'
-  },
-  {
-    title: '360p',
-    type: 'vidoe'
-  },
-  {
-    title: '240p',
-    type: 'vidoe'
-  },
-  {
-    title: 'QCIF',
-    type: 'vidoe'
-  },
-  {
-    title: 'High . 256kbps',
-    type: 'audio'
-  },
-  {
-    title: 'Medium . 192kbps',
-    type: 'audio'
-  },
-  {
-    title: 'Low . 128kbps',
-    type: 'audio'
-  },
-]);
-
 const smartModeEnabled = ref(smartModeStore.enabled);
 const format = ref(smartModeStore.format);
 const quality = ref(smartModeStore.quality);
 const directory = ref(smartModeStore.directory);
 const isValid = computed(() => !smartModeEnabled.value || (format.value && quality.value && directory.value));
+
+const qualities = ref([]);
+watch(format, (from, to) => {
+  if (from && to) {
+    if (from?.includes('audio') && !to?.includes('audio')) {
+      quality.value = null;
+    } else if (to?.includes('audio') && !from?.includes('audio')) {
+      quality.value = null;
+    }
+  }
+  // quality.value = null;
+  qualities.value = format.value.includes('audio') ? smartModeStore.lookups.audio_qualities : smartModeStore.lookups.quality_labels;
+});
 
 watch(smartModeStore.$state, () => {
   smartModeEnabled.value = smartModeStore.enabled;

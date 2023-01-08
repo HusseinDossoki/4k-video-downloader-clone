@@ -32,6 +32,7 @@ fn main() {
             commands::delete_download_item,
             commands::show_in_folder,
             commands::remove_all_downloads,
+            commands::get_smart_mode_lookups,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -16,12 +16,31 @@ const useSmartModeStoreFactory = defineStore("smartModeStore", {
     quality: null,
     directory: null,
     loading: false,
+    lookups: {},
     errors: []
   }),
   getters: {
 
   },
   actions: {
+    async init_lookups() {
+      this.loading = true;
+      this.errors = [];
+
+      return invoke("get_smart_mode_lookups")
+        .then(res => {
+          this.lookups = res;
+          this.loading = false;
+        })
+        .catch(err => {
+          function onlyUnique(value, index, self) {
+            return self.indexOf(value) === index;
+          }
+          this.errors.push(err);
+          this.errors = this.errors.filter(x => onlyUnique);
+          this.loading = false;
+        });
+    },
     async init() {
       this.loading = true;
       this.errors = [];
@@ -90,6 +109,7 @@ export const useSmartModeStore = new Proxy(useSmartModeStoreFactory, {
   apply: (target, thisArg, argumentsList) => {
     if (!store) {
       store = target.apply(thisArg, argumentsList);
+      store.init_lookups();
       store.init();
     }
 

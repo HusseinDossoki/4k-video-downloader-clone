@@ -5,6 +5,32 @@ use tauri::Window;
 use super::helpers;
 use super::models;
 
+use strum::IntoEnumIterator;
+
+pub fn get_lookups() -> models::Lookups {
+    let mut formats = Vec::new();
+    let mut quality_labels = Vec::new();
+    let mut audio_qualities = Vec::new();
+
+    for x in models::Format::iter() {
+        formats.push(x.clone().to_string());
+    }
+
+    for x in models::QualityLabel::iter() {
+        quality_labels.push(x.clone().to_string());
+    }
+
+    for x in models::AudioQuality::iter() {
+        audio_qualities.push(x.clone().to_string());
+    }
+
+    return models::Lookups {
+        formats,
+        quality_labels,
+        audio_qualities,
+    };
+}
+
 pub async fn get_video_info(url: String) -> models::YoutubeVideoInfo {
     let id = Id::from_raw(&url).unwrap();
     let descrambler = VideoFetcher::from_id(id.into_owned())

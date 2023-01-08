@@ -329,6 +329,8 @@ dependencies = [
  "serde",
  "serde-enum-str",
  "serde_json",
+ "strum",
+ "strum_macros",
  "tauri",
  "tauri-build",
 ]

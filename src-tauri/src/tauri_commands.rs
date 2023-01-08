@@ -9,6 +9,11 @@ pub fn show_in_folder(path: String) {
 }
 
 #[tauri::command]
+pub fn get_smart_mode_lookups() -> crate::youtube_downloader::models::Lookups {
+    return downloader::get_lookups();
+}
+
+#[tauri::command]
 pub fn get_smart_mode() -> Result<models::SmartMode, String> {
     return smart_mode::get_smart_mode();
 }

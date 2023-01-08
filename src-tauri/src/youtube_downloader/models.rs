@@ -2,6 +2,13 @@ use serde::{Serialize, Deserialize};
 use serde_enum_str::{Deserialize_enum_str, Serialize_enum_str};
 
 #[derive(Serialize, Deserialize, Debug)]
+pub struct Lookups {
+  pub formats: Vec<String>,
+  pub audio_qualities: Vec<String>,
+  pub quality_labels: Vec<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct YoutubeVideoInfo {
   pub title: String,
   pub length_seconds: u64,
@@ -9,7 +16,7 @@ pub struct YoutubeVideoInfo {
 }
 
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize_enum_str, Serialize_enum_str)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize_enum_str, Serialize_enum_str, strum_macros::EnumIter)]
 pub enum Format {
     #[serde(rename = "Any Video")]
     AnyVideo,
@@ -25,7 +32,7 @@ pub enum Format {
     AudioWEBM,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize_enum_str, Serialize_enum_str)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize_enum_str, Serialize_enum_str, strum_macros::EnumIter)]
 pub enum AudioQuality {
     #[serde(rename = "AUDIO_QUALITY_LOW", alias = "low")]
     Low,
@@ -35,7 +42,7 @@ pub enum AudioQuality {
     High,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize_enum_str, Serialize_enum_str)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize_enum_str, Serialize_enum_str, strum_macros::EnumIter)]
 #[serde(rename_all = "lowercase")]
 pub enum Quality {
     Tiny,
@@ -49,7 +56,7 @@ pub enum Quality {
     Hd2160,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize_enum_str, Serialize_enum_str)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize_enum_str, Serialize_enum_str, strum_macros::EnumIter)]
 #[non_exhaustive]
 pub enum QualityLabel {
     #[serde(rename = "144p")]
