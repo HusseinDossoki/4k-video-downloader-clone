@@ -34,7 +34,26 @@ pub async fn get_video_info(url: String) -> models::YoutubeVideoInfo {
 }
 
 pub async fn download_youtube_video(download_item: &db::models::DownloadItem, window: Window) {
-    let stream = helpers::get_stream(&download_item.url, None, None, None, None).await;
+    let smart_mode = db::smart_mode::get_smart_mode().unwrap();
+
+    // Filters
+    let f_format = smart_mode.format.parse::<models::Format>().ok();
+    let mut f_quality_label = smart_mode.quality.parse::<models::QualityLabel>().ok();
+    let mut f_audio_quality = smart_mode.quality.parse::<models::AudioQuality>().ok();
+    if smart_mode.format.contains("video") {
+        f_audio_quality = None;
+    } else {
+        f_quality_label = None;
+    }
+
+    let stream = helpers::get_stream(
+        &download_item.url,
+        f_format,
+        None,
+        f_quality_label,
+        f_audio_quality,
+    )
+    .await;
 
     // Update info in db
     let params = db::models::UpdateDownloadItemFullInfo {

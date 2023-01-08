@@ -1,4 +1,5 @@
 use serde::{Serialize, Deserialize};
+use serde_enum_str::{Deserialize_enum_str, Serialize_enum_str};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct YoutubeVideoInfo {
@@ -8,7 +9,7 @@ pub struct YoutubeVideoInfo {
 }
 
 
-#[derive(Clone, Copy, Debug, Deserialize, Serialize, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize_enum_str, Serialize_enum_str)]
 pub enum Format {
     #[serde(rename = "Any Video")]
     AnyVideo,
@@ -24,7 +25,7 @@ pub enum Format {
     AudioWEBM,
 }
 
-#[derive(Clone, Copy, Debug, Deserialize, Serialize, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize_enum_str, Serialize_enum_str)]
 pub enum AudioQuality {
     #[serde(rename = "AUDIO_QUALITY_LOW", alias = "low")]
     Low,
@@ -34,7 +35,7 @@ pub enum AudioQuality {
     High,
 }
 
-#[derive(Clone, Copy, Debug, Deserialize, Serialize, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize_enum_str, Serialize_enum_str)]
 #[serde(rename_all = "lowercase")]
 pub enum Quality {
     Tiny,
@@ -48,7 +49,7 @@ pub enum Quality {
     Hd2160,
 }
 
-#[derive(Clone, Copy, Debug, Deserialize, Serialize, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize_enum_str, Serialize_enum_str)]
 #[non_exhaustive]
 pub enum QualityLabel {
     #[serde(rename = "144p")]
@@ -113,36 +114,4 @@ pub enum QualityLabel {
     P4320Hz60,
     #[serde(rename = "4320p60 HDR")]
     P4320Hz60HDR,
-}
-
-impl std::fmt::Display for QualityLabel {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let serilazed = serde_json::to_string(self).unwrap().clone();
-        let result = serde_json::from_str::<String>(&serilazed).unwrap();
-        return write!(f, "{result}");
-    }
-}
-
-impl std::fmt::Display for Quality {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let serilazed = serde_json::to_string(self).unwrap().clone();
-        let result = serde_json::from_str::<String>(&serilazed).unwrap();
-        return write!(f, "{result}");
-    }
-}
-
-impl std::fmt::Display for AudioQuality {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let serilazed = serde_json::to_string(self).unwrap().clone();
-        let result = serde_json::from_str::<String>(&serilazed).unwrap();
-        return write!(f, "{result}");
-    }
-}
-
-impl std::fmt::Display for Format {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let serilazed = serde_json::to_string(self).unwrap().clone();
-        let result = serde_json::from_str::<String>(&serilazed).unwrap();
-        return write!(f, "{result}");
-    }
 }
