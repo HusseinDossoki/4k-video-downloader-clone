@@ -37,13 +37,10 @@ pub async fn get_video_info(url: String) -> models::YoutubeVideoInfo {
 }
 
 pub async fn download_youtube_video(
-    db_id: &i32,
-    video_url: &String,
-    directory: &String,
-    title: &String,
+    download_item: &db::models::DownloadItem,
     window: Window,
 ) {
-    let url = Url::parse(video_url).unwrap();
+    let url = Url::parse(&download_item.url).unwrap();
     let fetcher: VideoFetcher = VideoFetcher::from_url(&url).unwrap();
     let descrambler: VideoDescrambler = fetcher.fetch().await.unwrap();
     let video: Video = descrambler.descramble().unwrap();
@@ -58,7 +55,7 @@ pub async fn download_youtube_video(
         Some(data) => {
             // Update info in db
             let params = db::models::UpdateDownloadItemFullInfo {
-                id: db_id.clone(),
+                id: download_item.id.clone(),
                 format: data.mime.to_string().clone(),
                 quality: quality_string(&data.quality),
                 quality_label: quality_label_string(&data.quality_label.unwrap()),
@@ -68,9 +65,9 @@ pub async fn download_youtube_video(
             db::downloads::update_video_full_info(params.clone()).unwrap();
             window.emit("downloads-changed", true).unwrap();
 
-            let file_path = format!("{}/{}.mp4", directory, title);
+            let file_path = format!("{}/{}.mp4", &download_item.directory, &download_item.title.clone().unwrap());
             data.download_to(file_path).await.unwrap();
-            db::downloads::download_completed(&db_id).unwrap();
+            db::downloads::download_completed(&download_item.id).unwrap();
             window.emit("downloads-changed", true).unwrap();
         }
         None => todo!(),
