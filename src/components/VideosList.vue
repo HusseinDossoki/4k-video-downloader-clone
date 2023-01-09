@@ -50,7 +50,7 @@ import { ref } from "vue";
 import { useDownloadsStore } from "../stores/DownloadsStore";
 import ContextMenu from "@imengyu/vue3-context-menu";
 import { invoke } from "@tauri-apps/api/tauri";
-
+import { writeText } from '@tauri-apps/api/clipboard';
 
 const downloadsStore = useDownloadsStore();
 const selected = ref(null);
@@ -112,7 +112,7 @@ function onContextMenu(e, video) {
         divided: true,
         label: "Copy Link Address",
         onClick: () => {
-          alert("You click a menu item");
+          writeText(video.url);
         }
       },
       {
