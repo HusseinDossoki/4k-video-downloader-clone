@@ -117,7 +117,7 @@ async function browseDirectory() {
 
 <style scoped lang="scss">
 .root {
-  background-color: color(srgb 0.1843 0.1843 0.1843);
+  background-color: #2F2F2F;
   height: 100%;
   position: fixed;
   bottom: 0;
@@ -146,7 +146,7 @@ select {
 
 .button {
   width: 70px;
-  background-color: color(srgb 0.396 0.3961 0.3961);
+  background-color: #656565;
   border: none;
   border-radius: 5px;
   color: white;
@@ -158,7 +158,7 @@ select {
 }
 
 .path {
-  background-color: color(srgb 0.1608 0.1608 0.1608);
+  background-color: #292929;
   padding: 6px;
   border-radius: 2px;
 }

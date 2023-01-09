@@ -160,7 +160,7 @@ section {
 }
 
 section.active {
-  background-color: color(srgb 0.1504 0.4695 0.94) !important;
+  background-color: #2678F0 !important;
 }
 
 section.active .bar-item {
@@ -168,7 +168,7 @@ section.active .bar-item {
 }
 
 section.odd {
-  background-color: color(srgb 0.1608 0.1608 0.1608);
+  background-color: #292929;
 }
 
 .body {
@@ -203,7 +203,7 @@ img {
   height: 6px;
   border-radius: 15px;
   display: inline-flex;
-  background-color: color(srgb 0.247 0.2471 0.2471);
+  background-color: #3F3F3F;
 }
 
 .actions {

@@ -32,7 +32,7 @@ p {
 }
 
 .root {
-  background-color: color(srgb 0.1961 0.1961 0.1961);
+  background-color: #323232;
   height: 100%;
   position: fixed;
   bottom: 0;
@@ -43,7 +43,7 @@ p {
 
 header {
   height: 57px;
-  background-color: color(srgb 0.2202 0.1666 0.1546);
+  background-color: #382A27;
   color: white;
 }
 
@@ -59,7 +59,7 @@ header {
 }
 
 .link.active {
-  background-color: color(srgb 0.2746 0.2256 0.2049);
+  background-color: #463A34;
 }
 
 .link .link-icon {

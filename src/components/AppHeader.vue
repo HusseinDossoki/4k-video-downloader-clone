@@ -145,7 +145,7 @@ header {
 }
 
 i.fa-youtube {
-  color: color(display-p3 0.9176 0.2 0.1373);
+  color: #EA3323;
   position: absolute;
   top: 23px;
   left: 40px;

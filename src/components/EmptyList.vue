@@ -18,7 +18,7 @@ section.body-container {
   height: 100%;
   text-align: center;
   padding-top: 20%;
-  background-color: color(srgb 0.1176 0.1176 0.1177);
+  background-color: #1E1E1E;
 }
 
 .description {
