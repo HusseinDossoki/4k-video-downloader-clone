@@ -1,7 +1,7 @@
 <template>
   <footer>
     Developed by <strong>
-      <a href="https://www.linkedin.com/in/husseindossoki/">Hussein Dossoki</a>
+      <a target="_blank" href="https://www.linkedin.com/in/husseindossoki/">Hussein Dossoki</a>
     </strong> ©2022
   </footer>
 </template>
