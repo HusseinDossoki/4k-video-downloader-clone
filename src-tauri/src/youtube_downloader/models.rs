@@ -15,6 +15,12 @@ pub struct YoutubeVideoInfo {
   pub thumbnail: String,
 }
 
+#[derive(Serialize, Deserialize, Debug)]
+pub struct PlaylistVideo {
+  pub id: String,
+  pub title: String,
+  pub thumbnail: String,
+}
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize_enum_str, Serialize_enum_str, strum_macros::EnumIter)]
 pub enum Format {
