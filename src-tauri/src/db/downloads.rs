@@ -84,7 +84,7 @@ pub fn update_video_full_info(
 ) -> Result<models::DownloadItem, String> {
     let conn = establish_connection();
 
-    use downloads::dsl::{format, id, quality, quality_label, size_in_bytes, approx_duration_ms};
+    use downloads::dsl::{approx_duration_ms, format, id, quality, quality_label, size_in_bytes};
 
     let res = diesel::update(downloads::dsl::downloads.filter(id.eq(&params.id)))
         .set((
@@ -141,6 +141,28 @@ pub fn download_completed(qid: &i32) -> Result<(), String> {
 
     let res = diesel::update(downloads::dsl::downloads.filter(id.eq(&qid)))
         .set(status.eq("downloaded"))
+        .execute(&conn);
+
+    if res.is_err() {
+        return Err(
+            "Error when updating 'video' status to 'downloaded' in the database".to_string(),
+        );
+    }
+
+    return Ok(());
+}
+
+pub fn update_download_progress(
+    qid: i32,
+    qprogress: i32,
+    qtime_left_sec: i32,
+) -> Result<(), String> {
+    let conn = establish_connection();
+
+    use downloads::dsl::{id, progress, time_left_sec};
+
+    let res = diesel::update(downloads::dsl::downloads.filter(id.eq(&qid)))
+        .set((progress.eq(qprogress), time_left_sec.eq(qtime_left_sec)))
         .execute(&conn);
 
     if res.is_err() {

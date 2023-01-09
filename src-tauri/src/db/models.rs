@@ -50,6 +50,7 @@ pub struct DownloadItem {
     pub quality: String,
     pub quality_label: String,
     pub progress: i32,
+    pub time_left_sec: i32,
     pub approx_duration_ms: Option<i32>,
     pub status: String,
     pub url: String,

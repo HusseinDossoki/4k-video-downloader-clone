@@ -34,16 +34,18 @@ const useDownloadsStoreFactory = defineStore("downloadsStore", {
           this.list = res;
 
           // Duration progress
-          this.list.forEach(downloadItem => {
+          this.list.forEach(async (downloadItem) => {
             if (downloadItem.status == 'inprogress' && downloadItem.approx_duration_ms > 0 && downloadItem.progress < 100) {
               let seconds = downloadItem.approx_duration_ms / 1000;
-              downloadItem.timeLeftInSec = 0;
-              downloadItem.timer = setInterval(() => {
+              downloadItem.timer = setInterval(async () => {
                 if (downloadItem.progress >= 100) {
                   clearInterval(downloadItem.timer);
                 }
-                downloadItem.timeLeftInSec++;
-                downloadItem.progress = downloadItem.timeLeftInSec / seconds * 100; // percentage of 100
+                downloadItem.time_left_sec++;
+                downloadItem.progress = downloadItem.time_left_sec / seconds * 100; // percentage of 100
+
+                await invoke("update_download_progress", { id: downloadItem.id, progress: Math.floor(downloadItem.progress), timeLeftSec: downloadItem.time_left_sec });
+
               }, 1000);
             }
           });
