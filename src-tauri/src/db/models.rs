@@ -50,6 +50,7 @@ pub struct DownloadItem {
     pub quality: String,
     pub quality_label: String,
     pub progress: i32,
+    pub approx_duration_ms: Option<i32>,
     pub status: String,
     pub url: String,
     pub directory: String,
@@ -77,6 +78,7 @@ pub struct UpdateDownloadItemInfo {
 pub struct UpdateDownloadItemFullInfo {
     pub id: i32,
     pub size_in_bytes: i32,
+    pub approx_duration_ms: i32,
     pub format: String,
     pub quality: String,
     pub quality_label: String,

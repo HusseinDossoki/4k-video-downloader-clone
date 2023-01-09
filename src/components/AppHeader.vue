@@ -75,8 +75,6 @@ async function download() {
     }).catch(err => {
       console.log(err);
     });
-
-  console.log(copiedUrl.value);
 }
 
 setInterval(() => {

@@ -10,6 +10,7 @@ CREATE TABLE
     quality VARCHAR NOT NULL DEFAULT '',
     quality_label VARCHAR NOT NULL DEFAULT '',
     progress INTEGER NOT NULL DEFAULT 0,
+    approx_duration_ms INTEGER NULL,
     status VARCHAR NOT NULL DEFAULT 'new', /* new, inprogress, paused, postponed, failed, downloaded */
     url VARCHAR NOT NULL,
     directory VARCHAR NOT NULL

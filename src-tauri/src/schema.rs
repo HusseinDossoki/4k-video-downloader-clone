@@ -11,6 +11,7 @@ diesel::table! {
         quality -> Text,
         quality_label -> Text,
         progress -> Integer,
+        approx_duration_ms -> Nullable<Integer>,
         status -> Text,
         url -> Text,
         directory -> Text,

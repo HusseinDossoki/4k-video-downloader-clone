@@ -88,6 +88,7 @@ pub async fn download_youtube_video(download_item: &db::models::DownloadItem, wi
         quality: helpers::quality_string(&stream.quality),
         quality_label: helpers::quality_label_string(&stream.quality_label),
         size_in_bytes: stream.content_length().await.unwrap() as i32,
+        approx_duration_ms: stream.approx_duration_ms.unwrap() as i32,
     };
     db::downloads::update_video_full_info(params.clone()).unwrap();
     window.emit("downloads-changed", true).unwrap();

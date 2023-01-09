@@ -84,7 +84,7 @@ pub fn update_video_full_info(
 ) -> Result<models::DownloadItem, String> {
     let conn = establish_connection();
 
-    use downloads::dsl::{format, id, quality, quality_label, size_in_bytes};
+    use downloads::dsl::{format, id, quality, quality_label, size_in_bytes, approx_duration_ms};
 
     let res = diesel::update(downloads::dsl::downloads.filter(id.eq(&params.id)))
         .set((
@@ -92,6 +92,7 @@ pub fn update_video_full_info(
             quality_label.eq(params.quality_label),
             size_in_bytes.eq(params.size_in_bytes),
             format.eq(params.format),
+            approx_duration_ms.eq(params.approx_duration_ms),
         ))
         .execute(&conn);
 

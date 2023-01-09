@@ -19,8 +19,6 @@ pub async fn get_stream(
     let mut filtered_streams = Vec::new();
 
     for s in streams.iter() {
-        println!("{:?}", s.mime.to_string());
-
         if format.is_some() {
             if format.unwrap() == models::Format::AnyVideo {
                 if !s.includes_video_track {

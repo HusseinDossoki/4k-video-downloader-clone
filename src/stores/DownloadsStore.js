@@ -32,6 +32,22 @@ const useDownloadsStoreFactory = defineStore("downloadsStore", {
         .then(res => {
           console.log('Downloads => ', res);
           this.list = res;
+
+          // Duration progress
+          this.list.forEach(downloadItem => {
+            if (downloadItem.status == 'inprogress' && downloadItem.approx_duration_ms > 0 && downloadItem.progress < 100) {
+              let seconds = downloadItem.approx_duration_ms / 1000;
+              downloadItem.timeLeftInSec = 0;
+              downloadItem.timer = setInterval(() => {
+                if (downloadItem.progress >= 100) {
+                  clearInterval(downloadItem.timer);
+                }
+                downloadItem.timeLeftInSec++;
+                downloadItem.progress = downloadItem.timeLeftInSec / seconds * 100; // percentage of 100
+              }, 1000);
+            }
+          });
+
           this.loading = false;
         })
         .catch(err => {
