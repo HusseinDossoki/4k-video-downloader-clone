@@ -1,6 +1,8 @@
 <template>
   <footer>
-    Developed by <strong>Hussein Dossoki</strong> ©2022
+    Developed by <strong>
+      <a href="https://www.linkedin.com/in/husseindossoki/">Hussein Dossoki</a>
+    </strong> ©2022
   </footer>
 </template>
 
