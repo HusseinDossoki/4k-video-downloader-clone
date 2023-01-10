@@ -59,10 +59,24 @@ function openPreferences() {
   });
 }
 
+async function openDownloadClip() {
+  const webview = new WebviewWindow("DownloadClip", {
+    url: '/download-clip',
+    title: "Download Clip",
+    resizable: false,
+    width: 515,
+    height: 500,
+    center: true,
+    focus: true,
+  });
+}
+
+
 async function download() {
   if (!validYoutubeUrl.value) return;
   if (!smartModeStore.enabled) {
     // Open the custom download window
+    openDownloadClip();
     return;
   }
 
