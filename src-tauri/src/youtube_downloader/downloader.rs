@@ -100,6 +100,7 @@ pub async fn download_youtube_video(download_item: &db::models::DownloadItem, wi
     );
 
     let download_id = download_item.id;
+    let window2 = window.clone();
 
     let callback = rustube::Callback::new()
         .connect_on_progress_closure(move |cargs| {
@@ -109,7 +110,7 @@ pub async fn download_youtube_video(download_item: &db::models::DownloadItem, wi
         })
         .connect_on_complete_closure(move |_| {
             db::downloads::download_completed(&download_id).unwrap();
-            // window.emit("downloads-changed", true).unwrap();
+            window2.emit("downloads-changed", true).unwrap();
         });
 
     stream
