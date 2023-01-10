@@ -2853,6 +2853,7 @@ dependencies = [
  "chrono",
  "derivative",
  "derive_more",
+ "futures",
  "log",
  "log-derive",
  "mime",

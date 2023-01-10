@@ -4,18 +4,17 @@ diesel::table! {
     downloads (id) {
         id -> Integer,
         title -> Nullable<Text>,
+        url -> Text,
         thumbnail -> Nullable<Text>,
+        status -> Text,
+        directory -> Text,
         length_seconds -> Integer,
         size_in_bytes -> Integer,
-        format -> Text,
-        quality -> Text,
-        quality_label -> Text,
-        progress -> Integer,
-        time_left_sec -> Integer,
+        current_chunk -> Nullable<Integer>,
+        format -> Nullable<Text>,
+        quality -> Nullable<Text>,
+        quality_label -> Nullable<Text>,
         approx_duration_ms -> Nullable<Integer>,
-        status -> Text,
-        url -> Text,
-        directory -> Text,
     }
 }
 

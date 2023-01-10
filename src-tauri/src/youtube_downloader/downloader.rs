@@ -98,7 +98,22 @@ pub async fn download_youtube_video(download_item: &db::models::DownloadItem, wi
         &download_item.directory,
         &download_item.title.clone().unwrap()
     );
-    stream.download_to(file_path).await.unwrap();
-    db::downloads::download_completed(&download_item.id).unwrap();
-    window.emit("downloads-changed", true).unwrap();
+
+    let download_id = download_item.id;
+
+    let callback = rustube::Callback::new()
+        .connect_on_progress_closure(move |cargs| {
+            db::downloads::update_download_progress(&download_id, cargs.current_chunk as i32)
+                .unwrap();
+            window.emit("downloads-changed", true).unwrap();
+        })
+        .connect_on_complete_closure(move |_| {
+            db::downloads::download_completed(&download_id).unwrap();
+            // window.emit("downloads-changed", true).unwrap();
+        });
+
+    stream
+        .download_to_with_callback(file_path, callback)
+        .await
+        .unwrap();
 }

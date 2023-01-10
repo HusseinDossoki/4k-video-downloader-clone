@@ -102,8 +102,3 @@ pub async fn remove_all_downloads(window: Window) {
         window.emit("downloads-changed", true).unwrap();
     }
 }
-
-#[tauri::command]
-pub fn update_download_progress(id: i32, progress: i32, time_left_sec: i32) {
-    let _ = downloads::update_download_progress(id, progress, time_left_sec);
-}

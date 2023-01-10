@@ -153,21 +153,20 @@ pub fn download_completed(qid: &i32) -> Result<(), String> {
 }
 
 pub fn update_download_progress(
-    qid: i32,
-    qprogress: i32,
-    qtime_left_sec: i32,
+    qid: &i32,
+    qcurrent_chunk: i32,
 ) -> Result<(), String> {
     let conn = establish_connection();
 
-    use downloads::dsl::{id, progress, time_left_sec};
+    use downloads::dsl::{id, current_chunk};
 
-    let res = diesel::update(downloads::dsl::downloads.filter(id.eq(&qid)))
-        .set((progress.eq(qprogress), time_left_sec.eq(qtime_left_sec)))
+    let res = diesel::update(downloads::dsl::downloads.filter(id.eq(qid)))
+        .set(current_chunk.eq(qcurrent_chunk))
         .execute(&conn);
 
     if res.is_err() {
         return Err(
-            "Error when updating 'video' status to 'downloaded' in the database".to_string(),
+            "Error when updating 'current_chunk' in the database".to_string(),
         );
     }
 

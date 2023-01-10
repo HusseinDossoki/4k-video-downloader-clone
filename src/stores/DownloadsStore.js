@@ -33,21 +33,9 @@ const useDownloadsStoreFactory = defineStore("downloadsStore", {
           console.log('Downloads => ', res);
           this.list = res;
 
-          // Duration progress
-          this.list.forEach(async (downloadItem) => {
-            if (downloadItem.status == 'inprogress' && downloadItem.approx_duration_ms > 0 && downloadItem.progress < 100) {
-              let seconds = downloadItem.approx_duration_ms / 1000;
-              downloadItem.timer = setInterval(async () => {
-                if (downloadItem.progress >= 100) {
-                  clearInterval(downloadItem.timer);
-                }
-                downloadItem.time_left_sec++;
-                downloadItem.progress = downloadItem.time_left_sec / seconds * 100; // percentage of 100
-
-                await invoke("update_download_progress", { id: downloadItem.id, progress: Math.floor(downloadItem.progress), timeLeftSec: downloadItem.time_left_sec });
-
-              }, 1000);
-            }
+          // Set progress
+          this.list.forEach(item => {
+            item.progress = item.current_chunk / item.size_in_bytes * 100;
           });
 
           this.loading = false;
