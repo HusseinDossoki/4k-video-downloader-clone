@@ -24,6 +24,12 @@ const useDownloadsStoreFactory = defineStore("downloadsStore", {
     }
   },
   actions: {
+    update_progress(id, current_chunk) {
+      let item = this.list?.find(x => x.id == id);
+      if (!item) return;
+      item.progress = current_chunk / item.size_in_bytes * 100;
+      console.log('item.progress', item.progress, this.list);
+    },
     async init() {
       this.loading = true;
       this.errors = [];
@@ -78,8 +84,11 @@ export const useDownloadsStore = new Proxy(useDownloadsStoreFactory, {
       store.init();
 
       // listen for event to reload the download list
-      const unlisten = appWindow.listen('downloads-changed', (event) => {
+      appWindow.listen('downloads-changed', (event) => {
         store.init();
+      });
+      appWindow.listen('download-progress', (event) => {
+        store.update_progress(event.payload.id, event.payload.current_chunk);
       });
     }
 

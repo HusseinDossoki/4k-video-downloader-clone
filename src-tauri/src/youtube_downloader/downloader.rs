@@ -104,9 +104,13 @@ pub async fn download_youtube_video(download_item: &db::models::DownloadItem, wi
 
     let callback = rustube::Callback::new()
         .connect_on_progress_closure(move |cargs| {
-            db::downloads::update_download_progress(&download_id, cargs.current_chunk as i32)
-                .unwrap();
-            window.emit("downloads-changed", true).unwrap();
+            // db::downloads::update_download_progress(&download_id, cargs.current_chunk as i32).unwrap(); // "database is locked"
+
+            let p = models::ProgressInfo {
+                id: download_id,
+                current_chunk: cargs.current_chunk.clone() as i32,
+            };
+            window.emit("download-progress", p).unwrap();
         })
         .connect_on_complete_closure(move |_| {
             db::downloads::download_completed(&download_id).unwrap();
