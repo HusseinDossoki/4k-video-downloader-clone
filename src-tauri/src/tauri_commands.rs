@@ -78,8 +78,7 @@ pub async fn download_new_video(
     }
 
     let new_video = update_result.unwrap();
-    downloader::download_youtube_video(&new_video, window)
-    .await;
+    downloader::download_youtube_video(&new_video, window).await;
 
     return insert_result;
 }
@@ -101,4 +100,11 @@ pub async fn remove_all_downloads(window: Window) {
     if result.is_ok() {
         window.emit("downloads-changed", true).unwrap();
     }
+}
+
+#[tauri::command]
+pub async fn get_video_details(
+    url: String,
+) -> Result<crate::youtube_downloader::models::VideoDetails, String> {
+    return downloader::get_video_details(&url).await;
 }

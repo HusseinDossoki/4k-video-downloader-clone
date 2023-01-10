@@ -1,60 +1,124 @@
 <template>
-  <div class="root">
+  <div class="root" v-if="videoDetails">
     <header>
       <div class="d-flex">
-        <img src="https://media.wired.com/photos/5b899992404e112d2df1e94e/master/pass/trash2-01.jpg" class="card-img"
-          alt="image">
+        <img :src="videoDetails?.thumbnail" class="card-img" alt="image">
         <div class="px-3 w-100">
-          <p class="mb-2">Card title</p>
+          <p class="mb-2">{{ $filters.truncate(videoDetails?.title, 56) }}</p>
           <div class="d-flex">
-            <div class="bar-item"><i class="fa-regular fa-clock"></i> 04:33</div>
-            <div class="bar-item"><i class="fa-solid fa-link"></i> <a target="_blank"
-                href="https://www.youtube.com/watch?v=qgLaFF6HK88">https://www.youtube.com/watch?v=qgLaFF6HK88</a></div>
+            <div class="bar-item"><i class="fa-regular fa-clock"></i>
+              {{ $filters.formatTime(videoDetails?.length_seconds) }}</div>
+            <div class="bar-item"><i class="fa-solid fa-link"></i> <a target="_blank" :href="url">{{
+              $filters.truncate(url, 40)
+            }}</a></div>
           </div>
         </div>
       </div>
     </header>
     <section>
       <div class="d-flex first-section my-2">
-        <select>
-          <option>Download Video</option>
+        <select v-model="type">
+          <option value="video">Download Video</option>
+          <option value="audio">Extract Audio</option>
         </select>
         <label>Format:</label>
-        <select>
-          <option>MP4</option>
+        <select v-model="format">
+          <option v-for="f in formats" :key="f" :value="f">{{ f }}</option>
         </select>
       </div>
       <hr>
       <div class="second-section my-2">
-        <div class="d-flex mb-3" v-for="x in [1, 2, 3,1, 2, 31, 2, 31, 2, 31, 2, 3]">
-          <input type="radio" id="html" name="fav_language" value="HTML">
-          <label for="html" class="w-100 d-flex">
-            <span class="label-item">High Definition</span>
-            <span class="label-item">1080p</span>
-            <span class="label-item">MP4 . H264 . ACC</span>
-            <span class="label-item">13.3MB</span>
+        <div class="d-flex mb-3" v-for="(stream, i) in streams">
+          <input type="radio" :id="i" name="fav_stream" :value="stream" v-model="selectedStream" :key="i">
+          <label :for="i" class="w-100 d-flex">
+            <span class="label-item">{{ $filters.humanize(stream?.quality) }}</span>
+            <span class="label-item">{{ stream?.quality_label }}</span>
+            <span class="label-item">{{ stream?.format }}</span>
+            <span class="label-item">{{ $filters.formatSize(stream?.size_in_bytes) }}</span>
           </label>
         </div>
       </div>
       <hr>
       <div class="section-three">
-        <span class="path" v-if="directory">{{directory}}</span>
+        <span class="path" v-if="directory">{{ directory }}</span>
         <button class="button browse" @click="browseDirectory">Browse</button>
       </div>
     </section>
     <footer>
       <button class="button mx-2" @click="closeWindow">Cancel</button>
-      <button class="button">Download</button>
+      <button @click="download" class="button" :class="{ disabled: !isValid }" :disabled="!isValid">Download</button>
     </footer>
+  </div>
+  <div class="loading" v-if="!videoDetails">
+    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+      <span class="sr-only"></span>
+    </div>
+    <h5 class="mt-2">Retrieving information</h5>
+    <h6>Parsing video...</h6>
   </div>
 </template>
 
 <script setup>
 import { appWindow } from '@tauri-apps/api/window';
 import { open } from '@tauri-apps/api/dialog';
-import { ref } from "vue";
+import { ref, watch, computed } from "vue";
+import { readText } from '@tauri-apps/api/clipboard';
+import { invoke } from "@tauri-apps/api/tauri";
 
+const url = ref(null);
 const directory = ref(null);
+const type = ref("video");
+const format = ref(null);
+const formats = ref([]);
+const streams = ref([]);
+const selectedStream = ref(null);
+const videoDetails = ref();
+
+readText()
+  .then(res => {
+    url.value = res;
+
+    invoke("get_video_details", { url: url.value })
+      .then(res => {
+        videoDetails.value = res;
+        onTypeChnages();
+        console.log(res);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+
+  });
+
+watch(type, onTypeChnages);
+watch(format, onFormatChanges);
+
+const isValid = computed(() => selectedStream.value && type.value && format.value && directory.value);
+
+async function download() {
+  console.log(selectedStream.value);
+}
+
+function onTypeChnages() {
+  selectedStream.value = null;
+  if (type.value == 'video') {
+    formats.value = videoDetails.value.video_streams?.map(x => x.format);
+    streams.value = videoDetails.value.video_streams?.filter(x => x.format == format.value);
+  } else if (type.value == 'audio') {
+    formats.value = videoDetails.value.audio_streams?.map(x => x.format);
+    streams.value = videoDetails.value.audio_streams?.filter(x => x.format == format.value);
+  }
+  formats.value = [...new Set(formats.value)];
+  format.value = formats.value[0] || null;
+}
+function onFormatChanges() {
+  selectedStream.value = null;
+  if (type.value == 'video') {
+    streams.value = videoDetails.value.video_streams?.filter(x => x.format == format.value);
+  } else if (type.value == 'audio') {
+    streams.value = videoDetails.value.audio_streams?.filter(x => x.format == format.value);
+  }
+}
 
 async function closeWindow() {
   await appWindow.close();
@@ -174,19 +238,28 @@ select {
 
     .label-item:nth-child(1) {
       margin-right: 30px;
+      width: 70px;
     }
 
     .label-item:nth-child(2) {
       font-weight: bold;
+      width: 50px;
     }
 
     .label-item:nth-child(3) {
       margin-left: auto;
+      width: 60px;
     }
 
     .label-item:nth-child(4) {
       margin-left: 45px;
+      width: 70px;
     }
   }
+}
+
+.loading {
+  margin-top: 20%;
+  text-align: center;
 }
 </style>

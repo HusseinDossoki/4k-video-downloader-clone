@@ -1,9 +1,11 @@
-use crate::db;
-use rustube::{Id, VideoFetcher};
-use tauri::Window;
-
 use super::helpers;
 use super::models;
+use crate::db;
+use rustube::{
+    url::Url, video_info::player_response::streaming_data, Id, Video, VideoDescrambler,
+    VideoFetcher,
+};
+use tauri::Window;
 
 use strum::IntoEnumIterator;
 
@@ -121,4 +123,50 @@ pub async fn download_youtube_video(download_item: &db::models::DownloadItem, wi
         .download_to_with_callback(file_path, callback)
         .await
         .unwrap();
+}
+
+pub async fn get_video_details(url: &String) -> Result<models::VideoDetails, String> {
+    let url = Url::parse(url).unwrap();
+    let fetcher: VideoFetcher = VideoFetcher::from_url(&url).unwrap();
+    let descrambler: VideoDescrambler = fetcher.fetch().await.unwrap();
+    let video: Video = descrambler.descramble().unwrap();
+
+    let streams = video.streams();
+
+    let mut streams_result = Vec::new();
+
+    for s in streams.iter() {
+        streams_result.push(models::VideoDetailsStream {
+            quality: Some(helpers::quality_string(&s.quality.clone())),
+            quality_label: Some(helpers::quality_label_string(&s.quality_label.clone())),
+            format: Some(s.mime.to_string().clone()),
+            size_in_bytes: s.content_length().await.unwrap_or(0) as i32,
+        });
+    }
+
+    streams_result.sort_by_key(|x| std::cmp::Reverse(x.size_in_bytes));
+
+    let result = models::VideoDetails {
+        title: video.title().to_string(),
+        thumbnail: video
+            .video_details()
+            .thumbnails
+            .first()
+            .unwrap()
+            .url
+            .to_string(),
+        length_seconds: video.video_details().length_seconds,
+        video_streams: streams_result
+            .clone()
+            .into_iter()
+            .filter(|x| x.format.clone().unwrap().contains(&"video".to_string()))
+            .collect(),
+        audio_streams: streams_result
+            .clone()
+            .into_iter()
+            .filter(|x| x.format.clone().unwrap().contains(&"audio".to_string()))
+            .collect(),
+    };
+
+    return Ok(result);
 }

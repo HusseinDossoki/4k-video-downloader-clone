@@ -7,9 +7,12 @@ import { createPinia } from "pinia";
 import router from "./router";
 import "@imengyu/vue3-context-menu/lib/vue3-context-menu.css";
 import ContextMenu from "@imengyu/vue3-context-menu";
+import filters from "./helpers/filters";
 
-createApp(App)
+const app = createApp(App)
   .use(ContextMenu)
   .use(router)
-  .use(createPinia())
-  .mount("#app");
+  .use(createPinia());
+
+app.config.globalProperties.$filters = filters;
+app.mount("#app");

@@ -170,3 +170,19 @@ pub enum QualityLabel {
     #[serde(rename = "4320p60 HDR")]
     P4320Hz60HDR,
 }
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct VideoDetails {
+    pub title: String,
+    pub length_seconds: u64,
+    pub thumbnail: String,
+    pub video_streams: Vec<VideoDetailsStream>,
+    pub audio_streams: Vec<VideoDetailsStream>,
+}
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct VideoDetailsStream {
+    pub size_in_bytes: i32,
+    pub format: Option<String>,
+    pub quality: Option<String>,
+    pub quality_label: Option<String>,
+}
