@@ -6,7 +6,7 @@ use rustube::{
 pub async fn get_stream(
     url: &String,
     format: Option<models::Format>,
-    quality: Option<models::Quality>,
+    video_quality: Option<models::Quality>,
     quality_label: Option<models::QualityLabel>,
     audio_quality: Option<models::AudioQuality>,
 ) -> rustube::Stream {
@@ -31,7 +31,7 @@ pub async fn get_stream(
             }
         }
 
-        if quality.is_some() && quality_string(&s.quality) != quality.unwrap().to_string() {
+        if video_quality.is_some() && quality_string(&s.quality) != video_quality.unwrap().to_string() {
             continue;
         }
 

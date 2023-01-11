@@ -55,6 +55,9 @@ pub fn get_downloads() -> Result<Vec<models::DownloadItem>, String> {
 pub async fn download_new_video(
     url: String,
     directory: String,
+    format: Option<String>,
+    quality: Option<String>,
+    quality_label: Option<String>,
     window: Window,
 ) -> Result<i32, String> {
     let insert_result = downloads::add_download_item(url.clone(), directory.clone());
@@ -78,7 +81,7 @@ pub async fn download_new_video(
     }
 
     let new_video = update_result.unwrap();
-    downloader::download_youtube_video(&new_video, window).await;
+    downloader::download_youtube_video(&new_video, &format, &quality, &quality_label, window).await;
 
     return insert_result;
 }

@@ -83,7 +83,10 @@ async function download() {
   invoke("download_new_video",
     {
       url: copiedUrl.value,
-      directory: smartModeStore.directory
+      directory: smartModeStore.directory,
+      format: smartModeStore.format,
+      quality: smartModeStore.quality,
+      quality_label: smartModeStore.quality_label,
     }).then(res => {
       console.log('Video added: New Id => ', res);
     }).catch(err => {

@@ -97,6 +97,15 @@ const isValid = computed(() => selectedStream.value && type.value && format.valu
 
 async function download() {
   console.log(selectedStream.value);
+  invoke("download_new_video",
+    {
+      url: url.value,
+      directory: directory.value,
+      format: format.value,
+      quality: selectedStream.quality,
+      quality_label: selectedStream.quality_label,
+    });
+  await appWindow.close();
 }
 
 function onTypeChnages() {
