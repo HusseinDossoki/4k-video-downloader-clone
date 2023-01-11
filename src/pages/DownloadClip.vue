@@ -64,6 +64,7 @@ import { open } from '@tauri-apps/api/dialog';
 import { ref, watch, computed } from "vue";
 import { readText } from '@tauri-apps/api/clipboard';
 import { invoke } from "@tauri-apps/api/tauri";
+import { emit } from '@tauri-apps/api/event';
 
 const url = ref(null);
 const directory = ref(null);
@@ -95,17 +96,15 @@ watch(format, onFormatChanges);
 
 const isValid = computed(() => selectedStream.value && type.value && format.value && directory.value);
 
-async function download() {
-  console.log(selectedStream.value);
-  invoke("download_new_video",
-    {
-      url: url.value,
-      directory: directory.value,
-      format: format.value,
-      quality: selectedStream.quality,
-      quality_label: selectedStream.quality_label,
-    });
-  await appWindow.close();
+function download() {
+  const param = {
+    url: url.value,
+    directory: directory.value,
+    format: format.value,
+    quality: selectedStream.value.quality,
+    qualityLabel: selectedStream.value.quality_label,
+  };
+  emit('download_video', param).then(e => appWindow.close());
 }
 
 function onTypeChnages() {

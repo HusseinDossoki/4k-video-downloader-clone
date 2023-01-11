@@ -25,10 +25,23 @@ import { useSmartModeStore } from "../stores/SmartModeStore";
 import { WebviewWindow } from "@tauri-apps/api/window";
 import { readText } from '@tauri-apps/api/clipboard';
 import { invoke } from "@tauri-apps/api/tauri";
+import { listen, emit } from '@tauri-apps/api/event';
 
 const validYoutubeUrl = ref(false);
 const copiedUrl = ref(null);
 const smartModeStore = useSmartModeStore();
+
+listen_new_video();
+async function listen_new_video() {
+  const unlisten = await listen('download_video', (event) => {
+    console.log(event.payload);
+    invoke("download_new_video", event.payload).then(res => {
+      console.log('Video added: New Id => ', res);
+    }).catch(err => {
+      console.log(err);
+    });
+  });
+}
 
 async function openSmartMode() {
   const webview = new WebviewWindow("SmartMode", {
@@ -80,18 +93,14 @@ async function download() {
     return;
   }
 
-  invoke("download_new_video",
-    {
-      url: copiedUrl.value,
-      directory: smartModeStore.directory,
-      format: smartModeStore.format,
-      quality: smartModeStore.quality,
-      quality_label: smartModeStore.quality_label,
-    }).then(res => {
-      console.log('Video added: New Id => ', res);
-    }).catch(err => {
-      console.log(err);
-    });
+  const param = {
+    url: copiedUrl.value,
+    directory: smartModeStore.directory,
+    format: smartModeStore.format,
+    quality: smartModeStore.quality,
+    qualityLabel: smartModeStore.quality_label,
+  };
+  emit('download_video', param);
 }
 
 setInterval(() => {

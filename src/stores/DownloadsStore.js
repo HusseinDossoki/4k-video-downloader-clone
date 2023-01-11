@@ -28,7 +28,6 @@ const useDownloadsStoreFactory = defineStore("downloadsStore", {
       let item = this.list?.find(x => x.id == id);
       if (!item) return;
       item.progress = current_chunk / item.size_in_bytes * 100;
-      console.log('item.progress', item.progress, this.list);
     },
     async init() {
       this.loading = true;
