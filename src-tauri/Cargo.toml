@@ -22,7 +22,8 @@ serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 tauri = { version = "1.1", features = ["api-all"] }
 futures = "*"
-rustube = { version = "0.6.0", features = ["callback"] }
+rustube = { version = "0.6.0", features = ["callback"] } # Offical package
+# rustube = { git = "https://github.com/Discursif/rustube", branch = "master", features = ["callback"]  } # Forked from rustube to Fix download speed issue (Not stable)
 diesel = { version = "1.4.0", features = ["sqlite"] }
 libsqlite3-sys = { version = "0.9.1", features = ["bundled"] }
 diesel_migrations = { version = "1.4.0", features = ["sqlite"] }
