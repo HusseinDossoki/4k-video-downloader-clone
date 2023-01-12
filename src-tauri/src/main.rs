@@ -31,6 +31,7 @@ fn main() {
             commands::download_new_video,
             commands::delete_download_item,
             commands::show_in_folder,
+            commands::delete_file,
             commands::remove_all_downloads,
             commands::get_smart_mode_lookups,
             commands::get_video_details,

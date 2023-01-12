@@ -2,17 +2,18 @@
   <footer class="d-flex">
     <div>
       Developed by <strong>
-      <a target="_blank" href="https://www.linkedin.com/in/husseindossoki/">Hussein Dossoki</a>
-    </strong> ©2022
+        <a target="_blank" href="https://www.linkedin.com/in/husseindossoki/">Hussein Dossoki</a>
+      </strong> ©2022
     </div>
     <div class="text-center" style="margin-left: auto;">
-      3 items
+      {{downloadsStore.total}} items
     </div>
   </footer>
 </template>
 
 <script setup>
-
+import { useDownloadsStore } from "../stores/DownloadsStore";
+const downloadsStore = useDownloadsStore();
 </script>
 
 <style scoped>

@@ -19,7 +19,8 @@
       </div>
 
       <div class="d-flex" v-if="video.status == 'inprogress' || video.status == 'paused'">
-        <div class="bar-item time"><i class="fa-regular fa-clock"></i> {{ $filters.formatTime(video.length_seconds) }}</div>
+        <div class="bar-item time"><i class="fa-regular fa-clock"></i> {{ $filters.formatTime(video.length_seconds) }}
+        </div>
         <div class="bar-item size"><i class="fa-solid fa-ruler-horizontal"></i> {{
           $filters.formatSize(video.size_in_bytes)
         }}</div>
@@ -33,7 +34,8 @@
       </div>
 
       <div class="d-flex" v-if="video.status == 'downloaded'">
-        <div class="bar-item time"><i class="fa-regular fa-clock"></i> {{ $filters.formatTime(video.length_seconds) }}</div>
+        <div class="bar-item time"><i class="fa-regular fa-clock"></i> {{ $filters.formatTime(video.length_seconds) }}
+        </div>
         <div class="bar-item size"><i class="fa-solid fa-ruler-horizontal"></i> {{
           $filters.formatSize(video.size_in_bytes)
         }}</div>
@@ -101,7 +103,7 @@ function onContextMenu(e, video) {
       {
         label: "Delete File",
         onClick: () => {
-          deleteDownloadItem(video.id);
+          invoke("delete_file", { path: `${video.directory}/${video.title}.mp4`, id: video.id });
         }
       },
       {
@@ -166,9 +168,11 @@ section.odd {
   i {
     font-size: 15px;
   }
+
   &.time {
     width: 72px;
   }
+
   &.size {
     width: 90px;
   }

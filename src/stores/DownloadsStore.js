@@ -21,6 +21,9 @@ const useDownloadsStoreFactory = defineStore("downloadsStore", {
   getters: {
     emptyList(state) {
       return !state.list || state.list.length == 0;
+    },
+    total(state) {
+      return state.list.length;
     }
   },
   actions: {

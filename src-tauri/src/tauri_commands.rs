@@ -9,6 +9,18 @@ pub fn show_in_folder(path: String) {
 }
 
 #[tauri::command]
+pub fn delete_file(path: String, id: i32, window: Window) -> Result<(), String> {
+    let result = downloads::delete_download_item(id);
+
+    if result.is_ok() {
+        let _ = file_system::delete_file(path);
+        window.emit("downloads-changed", true).unwrap();
+    }
+
+    return result;
+}
+
+#[tauri::command]
 pub fn get_smart_mode_lookups() -> crate::youtube_downloader::models::Lookups {
     return downloader::get_lookups();
 }
