@@ -157,6 +157,9 @@ pub async fn get_video_details(url: &String) -> Result<models::VideoDetails, Str
     let mut streams_result = Vec::new();
 
     for s in streams.iter() {
+        if !s.includes_audio_track {
+            continue;
+        }
         streams_result.push(models::VideoDetailsStream {
             quality: Some(helpers::quality_string(&s.quality.clone())),
             quality_label: Some(helpers::quality_label_string(&s.quality_label.clone())),

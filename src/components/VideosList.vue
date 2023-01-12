@@ -19,8 +19,8 @@
       </div>
 
       <div class="d-flex" v-if="video.status == 'inprogress' || video.status == 'paused'">
-        <div class="bar-item"><i class="fa-regular fa-clock"></i> {{ $filters.formatTime(video.length_seconds) }}</div>
-        <div class="bar-item"><i class="fa-solid fa-ruler-horizontal"></i> {{
+        <div class="bar-item time"><i class="fa-regular fa-clock"></i> {{ $filters.formatTime(video.length_seconds) }}</div>
+        <div class="bar-item size"><i class="fa-solid fa-ruler-horizontal"></i> {{
           $filters.formatSize(video.size_in_bytes)
         }}</div>
         <div class="bar-item">
@@ -33,8 +33,8 @@
       </div>
 
       <div class="d-flex" v-if="video.status == 'downloaded'">
-        <div class="bar-item"><i class="fa-regular fa-clock"></i> {{ $filters.formatTime(video.length_seconds) }}</div>
-        <div class="bar-item"><i class="fa-solid fa-ruler-horizontal"></i> {{
+        <div class="bar-item time"><i class="fa-regular fa-clock"></i> {{ $filters.formatTime(video.length_seconds) }}</div>
+        <div class="bar-item size"><i class="fa-solid fa-ruler-horizontal"></i> {{
           $filters.formatSize(video.size_in_bytes)
         }}</div>
         <div class="bar-item"><i class="fa-brands fa-youtube"></i> {{ video.format + ' . ' + video.quality_label }}
@@ -164,6 +164,12 @@ section.odd {
 
   i {
     font-size: 15px;
+  }
+  &.time {
+    width: 60px;
+  }
+  &.size {
+    width: 90px;
   }
 }
 
