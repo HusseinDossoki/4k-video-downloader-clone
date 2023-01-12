@@ -52,7 +52,7 @@
     </section>
     <footer>
       <button class="button mx-2" @click="closeWindow">Cancel</button>
-      <button class="button" @click="save" :disabled="!isValid" :class="{ disabled: !isValid }">Ok</button>
+      <button class="button submit" @click="save" :disabled="!isValid" :class="{ disabled: !isValid }">Ok</button>
     </footer>
   </div>
 </template>
@@ -189,5 +189,8 @@ footer {
 
 .button.disabled {
   color: gray;
+}
+.button.submit {
+  background-color: #3478F6;
 }
 </style>

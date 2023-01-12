@@ -7,6 +7,10 @@
           <p class="link-text">General</p>
         </div>
         <div class="link" @click="selected = 2" :class="{ active: selected == 2 }">
+          <p class="link-icon"><i class="fa-solid fa-earth-americas"></i></p>
+          <p class="link-text">Connection</p>
+        </div>
+        <div class="link" @click="selected = 3" :class="{ active: selected == 3 }">
           <p class="link-icon"><i class="fa-regular fa-bell"></i></p>
           <p class="link-text">Notifications</p>
         </div>
@@ -14,16 +18,33 @@
     </header>
     <section>
       <GeneralPreferences v-if="selected == 1" />
-      <NotificationsPreferences v-if="selected == 2" />
+      <ConnectionPreferences v-if="selected == 2" />
+      <NotificationsPreferences v-if="selected == 3" />
     </section>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import GeneralPreferences from "../components/GeneralPreferences.vue";
 import NotificationsPreferences from "../components/NotificationsPreferences.vue";
+import ConnectionPreferences from "../components/ConnectionPreferences.vue";
+import { appWindow, LogicalSize } from "@tauri-apps/api/window";
 const selected = ref(1);
+
+watch(selected, () => {
+  switch (selected.value) {
+    case 1:
+      appWindow.setSize(new LogicalSize(620, 650));
+      break;
+    case 2:
+      appWindow.setSize(new LogicalSize(620, 420));
+      break;
+    case 3:
+      appWindow.setSize(new LogicalSize(620, 370));
+      break;
+  }
+});
 </script>
 
 <style scoped>
@@ -60,6 +81,7 @@ header {
 
 .link.active {
   background-color: #463A34;
+  color: #3478F6;
 }
 
 .link .link-icon {

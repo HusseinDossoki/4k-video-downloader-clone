@@ -4,7 +4,7 @@
       <div class="d-flex">
         <img :src="videoDetails?.thumbnail" class="card-img" alt="image">
         <div class="px-3 w-100">
-          <p class="mb-2">{{ $filters.truncate(videoDetails?.title, 56) }}</p>
+          <p class="mb-2">{{ $filters.truncate(videoDetails?.title, 53) }}</p>
           <div class="d-flex">
             <div class="bar-item"><i class="fa-regular fa-clock"></i>
               {{ $filters.formatTime(videoDetails?.length_seconds) }}</div>
@@ -46,7 +46,7 @@
     </section>
     <footer>
       <button class="button mx-2" @click="closeWindow">Cancel</button>
-      <button @click="download" class="button" :class="{ disabled: !isValid }" :disabled="!isValid">Download</button>
+      <button @click="download" class="button submit" :class="{ disabled: !isValid }" :disabled="!isValid">Download</button>
     </footer>
   </div>
   <div class="loading" v-if="!videoDetails">
@@ -269,5 +269,8 @@ select {
 .loading {
   margin-top: 20%;
   text-align: center;
+}
+.button.submit {
+  background-color: #3478F6;
 }
 </style>

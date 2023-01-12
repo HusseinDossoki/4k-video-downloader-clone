@@ -1,50 +1,81 @@
 <template>
-  <section class="toggles">
-    <div class="form-check m-auto">
-      <input class="form-check-input" type="checkbox" v-model="store.prevent_system_sleep" id="1">
-      <label class="form-check-label" for="1">
-        Prevent system sleep until downloads are finished
-      </label>
-    </div>
-    <div class="form-check m-auto">
-      <input class="form-check-input" type="checkbox" v-model="store.create_playlist_subdirectory" id="2">
-      <label class="form-check-label" for="2">
-        Create subdirectory for downloaded playlists and channels
-      </label>
-    </div>
-    <div class="form-check m-auto">
-      <input class="form-check-input" type="checkbox" v-model="store.numerate_playlists_files" id="3">
-      <label class="form-check-label" for="3">
-        Numerate files in playlists
-      </label>
-    </div>
-    <div class="form-check m-auto">
-      <input class="form-check-input" type="checkbox" v-model="store.skip_playlists_duplicates" id="4">
-      <label class="form-check-label" for="4">
-        Skip duplicates in playlists
-      </label>
-    </div>
-    <div class="form-check m-auto">
-      <input class="form-check-input" type="checkbox" v-model="store.remove_downloaded_items" id="5">
-      <label class="form-check-label" for="5">
-        Remove downloaded items from the list
-      </label>
-    </div>
-  </section>
-  <hr>
-  <section>
-    <div class="row mt-2">
-      <div class="col-2">
-        <label>Language</label>
+  <div class="p-4">
+    <section class="d-flex">
+      <p>Intensity</p>
+      <div class="toggles w-100">
+        <select class="w-100 mb-1">
+          <option value="1">Safe - 1 thread</option>
+          <option value="2">Safe - 2 threads</option>
+        </select>
+        <small>
+          High intensity might increase overall download performance but it may also lead to temporary IP address ban by
+          YouTube.
+        </small>
       </div>
-      <div class="col-10">
-        <select class="w-100">
-          <option value="MP4">System</option>
-          <option value="MP4">English</option>
+    </section>
+    <hr>
+    <section class="d-flex">
+      <p></p>
+      <div class="toggles">
+        <div class="form-check m-auto">
+          <input class="form-check-input" type="checkbox" v-model="store.prevent_system_sleep" id="1">
+          <label class="form-check-label" for="1">
+            Prevent system sleep until downloads are finished
+          </label>
+        </div>
+        <div class="form-check m-auto">
+          <input class="form-check-input" type="checkbox" v-model="store.create_playlist_subdirectory" id="2">
+          <label class="form-check-label" for="2">
+            Create subdirectory for downloaded playlists and channels
+          </label>
+        </div>
+        <div class="form-check m-auto">
+          <input class="form-check-input" type="checkbox" v-model="store.numerate_playlists_files" id="3">
+          <label class="form-check-label" for="3">
+            Numerate files in playlists
+          </label>
+        </div>
+        <div class="form-check m-auto">
+          <input class="form-check-input" type="checkbox" v-model="store.skip_playlists_duplicates" id="4">
+          <label class="form-check-label" for="4">
+            Skip duplicates in playlists
+          </label>
+        </div>
+        <div class="form-check m-auto">
+          <input class="form-check-input" type="checkbox" v-model="store.remove_downloaded_items" id="5">
+          <label class="form-check-label" for="5">
+            Remove downloaded items from the list
+          </label>
+        </div>
+      </div>
+    </section>
+    <hr>
+    <section class="d-flex">
+      <p></p>
+      <div class="toggles w-100" style="margin-left: 11px;">
+        <div class="form-check m-auto w-100">
+          <input class="form-check-input" type="checkbox" id="1">
+          <label class="form-check-label" for="1">
+            Install Beta versions
+          </label>
+        </div>
+        <small>
+          Beta versions could be less stable than the final ones, however, they grant you access to new features before
+          the offical release. Please report bugs and other issues, your feedback helps us improve the application
+        </small>
+      </div>
+    </section>
+    <hr>
+    <section class="d-flex">
+      <p>Language</p>
+      <div class="toggles w-100">
+        <select class="w-100 mb-1">
+          <option value="1">System</option>
+          <option value="2">English</option>
         </select>
       </div>
-    </div>
-  </section>
+    </section>
+  </div>
 </template>
 
 <script setup>
@@ -52,19 +83,21 @@ import { useGeneralPreferencesStore } from "../stores/GeneralPreferencesStore";
 const store = useGeneralPreferencesStore();
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 section {
-  padding: 20px;
   font-size: 13px;
-}
+  color: rgb(234, 231, 231);
 
-section.toggles {
-  padding-left: 100px;
-  padding-right: 100px;
-}
+  p {
+    width: 70px;
+    margin-right: 15px;
+    text-align: right;
+    font-weight: bold;
+  }
 
-select {
-  -webkit-appearance: menulist-button;
-  height: 25px;
+  select {
+    -webkit-appearance: menulist-button;
+    height: 25px;
+  }
 }
 </style>

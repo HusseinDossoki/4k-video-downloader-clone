@@ -154,6 +154,7 @@ section.odd {
 
 .body .video-title {
   font-size: 13px;
+  width: max-content;
 }
 
 .bar-item {
@@ -166,7 +167,7 @@ section.odd {
     font-size: 15px;
   }
   &.time {
-    width: 60px;
+    width: 72px;
   }
   &.size {
     width: 90px;
