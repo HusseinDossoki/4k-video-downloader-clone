@@ -1,8 +1,13 @@
 <template>
-  <footer>
-    Developed by <strong>
+  <footer class="d-flex">
+    <div>
+      Developed by <strong>
       <a target="_blank" href="https://www.linkedin.com/in/husseindossoki/">Hussein Dossoki</a>
     </strong> ©2022
+    </div>
+    <div class="text-center" style="margin-left: auto;">
+      3 items
+    </div>
   </footer>
 </template>
 
@@ -20,6 +25,7 @@ footer {
   color: rgba(238, 238, 238, 0.646);
   font-size: 11px;
   line-height: 21px;
-  text-align: center;
+  padding-left: 15px;
+  padding-right: 15px;
 }
 </style>

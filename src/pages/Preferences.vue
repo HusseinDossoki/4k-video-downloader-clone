@@ -47,7 +47,7 @@ watch(selected, () => {
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 p {
   margin-bottom: 0;
 }
@@ -94,6 +94,10 @@ header {
   margin: auto;
   font-size: 20px;
   font-weight: bold;
+
+  i {
+    zoom: 1.3;
+  }
 }
 
 .link .link-text {

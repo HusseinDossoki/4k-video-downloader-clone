@@ -42,9 +42,33 @@
           </label>
         </div>
         <div class="form-check m-auto">
+          <input class="form-check-input" type="checkbox" v-model="store.skip_playlists_duplicates" id="4">
+          <label class="form-check-label" for="4">
+            Generate .m3u file for downloaded playlists
+          </label>
+        </div>
+        <div class="form-check m-auto">
+          <input class="form-check-input" type="checkbox" v-model="store.skip_playlists_duplicates" id="4">
+          <label class="form-check-label" for="4">
+            Emebed subtitles in video file if possible
+          </label>
+        </div>
+        <div class="form-check m-auto">
+          <input class="form-check-input" type="checkbox" v-model="store.skip_playlists_duplicates" id="4">
+          <label class="form-check-label" for="4">
+            Search audio tags based on track title
+          </label>
+        </div>
+        <div class="form-check m-auto">
           <input class="form-check-input" type="checkbox" v-model="store.remove_downloaded_items" id="5">
           <label class="form-check-label" for="5">
             Remove downloaded items from the list
+          </label>
+        </div>
+        <div class="form-check m-auto">
+          <input class="form-check-input" type="checkbox" v-model="store.remove_downloaded_items" id="5">
+          <label class="form-check-label" for="5">
+            Submit download statistics
           </label>
         </div>
       </div>
