@@ -1,14 +1,14 @@
-use super::models;
+use super::models::lookups::*;
 use rustube::{
     url::Url, video_info::player_response::streaming_data, Video, VideoDescrambler, VideoFetcher,
 };
 
 pub async fn get_stream(
     url: &String,
-    format: Option<models::Format>,
-    video_quality: Option<models::Quality>,
-    quality_label: Option<models::QualityLabel>,
-    audio_quality: Option<models::AudioQuality>,
+    format: Option<Format>,
+    video_quality: Option<Quality>,
+    quality_label: Option<QualityLabel>,
+    audio_quality: Option<AudioQuality>,
 ) -> rustube::Stream {
     let url = Url::parse(url).unwrap();
     let fetcher: VideoFetcher = VideoFetcher::from_url(&url).unwrap();
@@ -24,7 +24,7 @@ pub async fn get_stream(
         }
         
         if format.is_some() {
-            if format.unwrap() == models::Format::AnyVideo {
+            if format.unwrap() == Format::AnyVideo {
                 if !s.includes_video_track {
                     continue;
                 }

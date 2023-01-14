@@ -1,31 +1,35 @@
 <template>
   <section class="d-flex box" :class="{ odd: index % 2 == 0, active: selected?.id == video.id }"
-    v-for="(video, index) in downloadsStore.list" :key="video.id" @click="selected = video"
+    v-for="(video, index) in downloadsStore.downloads" :key="video.id" @click="selected = video"
     @contextmenu="onContextMenu($event, video)">
     <img :src="video.thumbnail" :class="{ 'img-err': !video.thumbnail }">
-    <div class="body">
-      <h6 class="video-title">{{ video.title || 'Retrieving information' }}</h6>
 
-      <div class="d-flex" v-if="video.status == 'failed'">
-        <small style="font-size: 11px" class="text-danger">Failed</small>
+    <div class="body" v-if="video.status == 'queued'">
+      <h6 class="video-title">Queued</h6>
+
+      <div class="d-flex">
+        <small style="font-size: 11px">Waiting...</small>
       </div>
 
-      <div class="d-flex" v-if="video.status == 'new'">
+    </div>
+    <div class="body" v-if="video.status == 'parsing'">
+      <h6 class="video-title">Retrieving information</h6>
+
+      <div class="d-flex">
         <small style="font-size: 11px">Parsing video...</small>
       </div>
+    </div>
+    <div class="body" v-if="video.status == 'parsed'">
+      <h6 class="video-title">{{ video.title }}</h6>
 
-      <div class="d-flex" v-if="video.status == 'postponed'">
-        <div class="bar-item"><i class="fa-solid fa-circle-info"></i> Downloading is postponed</div>
-      </div>
-
-      <div class="d-flex" v-if="video.status == 'inprogress' || video.status == 'paused'">
+      <div class="d-flex">
         <div class="bar-item time"><i class="fa-regular fa-clock"></i> {{ $filters.formatTime(video.length_seconds) }}
         </div>
         <div class="bar-item size"><i class="fa-solid fa-ruler-horizontal"></i> {{
           $filters.formatSize(video.size_in_bytes)
         }}</div>
         <div class="bar-item">
-          <i class="fa-solid fa-down-long" :class="{ 'text-warning': video.status == 'paused' }"></i>
+          <i class="fa-solid fa-down-long"></i>
           <div class="progress">
             <div class="progress-bar" role="progressbar" :style="{ width: video.progress + '%' }" aria-valuemin="0"
               aria-valuemax="100"></div>
@@ -33,7 +37,63 @@
         </div>
       </div>
 
-      <div class="d-flex" v-if="video.status == 'downloaded'">
+    </div>
+    <div class="body" v-if="video.status == 'downloading'">
+      <h6 class="video-title">{{ video.title }}</h6>
+
+      <div class="d-flex">
+        <div class="bar-item time"><i class="fa-regular fa-clock"></i> {{ $filters.formatTime(video.length_seconds) }}
+        </div>
+        <div class="bar-item size"><i class="fa-solid fa-ruler-horizontal"></i> {{
+          $filters.formatSize(video.size_in_bytes)
+        }}</div>
+        <div class="bar-item">
+          <i class="fa-solid fa-down-long"></i>
+          <div class="progress">
+            <div class="progress-bar" role="progressbar" :style="{ width: video.progress + '%' }" aria-valuemin="0"
+              aria-valuemax="100"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="body" v-if="video.status == 'paused'">
+      <h6 class="video-title">{{ video.title }}</h6>
+
+      <div class="d-flex">
+        <div class="bar-item time"><i class="fa-regular fa-clock"></i> {{ $filters.formatTime(video.length_seconds) }}
+        </div>
+        <div class="bar-item size"><i class="fa-solid fa-ruler-horizontal"></i> {{
+          $filters.formatSize(video.size_in_bytes)
+        }}</div>
+        <div class="bar-item">
+          <i class="fa-solid fa-down-long text-warning"></i>
+          <div class="progress">
+            <div class="progress-bar" role="progressbar" :style="{ width: video.progress + '%' }" aria-valuemin="0"
+              aria-valuemax="100"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="body" v-if="video.status == 'postponed'">
+      <h6 class="video-title">{{ video.title }}</h6>
+
+      <div class="d-flex">
+        <div class="bar-item"><i class="fa-solid fa-circle-info"></i> Downloading is postponed</div>
+      </div>
+    </div>
+    <div class="body" v-if="video.status == 'failed'">
+      <h6 class="video-title">{{ video.title }}</h6>
+
+      <div class="d-flex">
+        <small style="font-size: 11px" class="text-danger">Failed</small>
+      </div>
+    </div>
+    <div class="body" v-if="video.status == 'downloaded'">
+      <h6 class="video-title">{{ video.title }}</h6>
+
+      <div class="d-flex">
         <div class="bar-item time"><i class="fa-regular fa-clock"></i> {{ $filters.formatTime(video.length_seconds) }}
         </div>
         <div class="bar-item size"><i class="fa-solid fa-ruler-horizontal"></i> {{
@@ -44,8 +104,9 @@
       </div>
 
     </div>
+
     <div class="actions">
-      <div class="close" @click="deleteDownloadItem(video.id)">❌</div>
+      <div class="close" @click="downloadsStore.removeDownloadItem(video)">❌</div>
       <div class="resume" v-if="video.status == 'paused'">Resume</div>
     </div>
   </section>
@@ -55,15 +116,11 @@
 import { ref } from "vue";
 import { useDownloadsStore } from "../stores/DownloadsStore";
 import ContextMenu from "@imengyu/vue3-context-menu";
-import { invoke } from "@tauri-apps/api/tauri";
 import { writeText } from '@tauri-apps/api/clipboard';
 
 const downloadsStore = useDownloadsStore();
 const selected = ref(null);
 
-async function deleteDownloadItem(id) {
-  await downloadsStore.deleteDownloadItem(id);
-}
 function onContextMenu(e, video) {
   //prevent the browser's default menu
   e.preventDefault();
@@ -84,7 +141,7 @@ function onContextMenu(e, video) {
         divided: true,
         label: "Show in Finder",
         onClick: () => {
-          invoke("show_in_folder", { path: `${video.directory}/${video.title}.mp4` });
+          downloadsStore.showInFolder(video);
         }
       },
       {
@@ -97,19 +154,19 @@ function onContextMenu(e, video) {
       {
         label: "Remove",
         onClick: () => {
-          deleteDownloadItem(video.id);
+          downloadsStore.removeDownloadItem(video);
         }
       },
       {
         label: "Delete File",
         onClick: () => {
-          invoke("delete_file", { path: `${video.directory}/${video.title}.mp4`, id: video.id });
+          downloadsStore.deleteDownloadItem(video);
         }
       },
       {
         label: "Remove All",
         onClick: () => {
-          invoke("remove_all_downloads");
+          downloadsStore.removeAllDownloads();
         }
       },
     ]

@@ -12,40 +12,28 @@ import { appWindow } from '@tauri-apps/api/window';
 const useDownloadsStoreFactory = defineStore("downloadsStore", {
   state: () => ({
     // Data
-    list: [],
+    downloads: [],
 
     // Helpers
     loading: false,
     errors: []
   }),
   getters: {
-    emptyList(state) {
-      return !state.list || state.list.length == 0;
+    isEmptyList(state) {
+      return !state.downloads || state.downloads.length == 0;
     },
     total(state) {
-      return state.list.length;
+      return state.downloads.length;
     }
   },
   actions: {
-    update_progress(id, current_chunk) {
-      let item = this.list?.find(x => x.id == id);
-      if (!item) return;
-      item.progress = current_chunk / item.size_in_bytes * 100;
-    },
     async init() {
       this.loading = true;
       this.errors = [];
 
       return invoke("get_downloads")
         .then(res => {
-          console.log('Downloads => ', res);
-          this.list = res;
-
-          // Set progress
-          this.list.forEach(item => {
-            item.progress = item.current_chunk / item.size_in_bytes * 100;
-          });
-
+          this.downloads = res;
           this.loading = false;
         })
         .catch(err => {
@@ -57,11 +45,11 @@ const useDownloadsStoreFactory = defineStore("downloadsStore", {
           this.loading = false;
         });
     },
-    async deleteDownloadItem(id) {
+    async showInFolder(downloadItem) {
       this.loading = true;
       this.errors = [];
 
-      return invoke("delete_download_item", { id: id })
+      return invoke("show_in_folder", { path: `${downloadItem.directory}/${downloadItem.file_name}` })
         .then(res => {
           this.loading = false;
         })
@@ -73,6 +61,140 @@ const useDownloadsStoreFactory = defineStore("downloadsStore", {
           this.errors = this.errors.filter(x => onlyUnique);
           this.loading = false;
         });
+    },
+    async removeDownloadItem(downloadItem) {
+      this.loading = true;
+      this.errors = [];
+
+      return invoke("remove_download_item", { id: downloadItem.id })
+        .then(res => {
+          const targetIndex = this.downloads.indexOf(x => x.id == downloadItem.id);
+          if (targetIndex > -1) {
+            this.downloads.splice(targetIndex, 1);
+          }
+          this.loading = false;
+        })
+        .catch(err => {
+          function onlyUnique(value, index, self) {
+            return self.indexOf(value) === index;
+          }
+          this.errors.push(err);
+          this.errors = this.errors.filter(x => onlyUnique);
+          this.loading = false;
+        });
+    },
+    async deleteDownloadItem(downloadItem) {
+      this.loading = true;
+      this.errors = [];
+
+      return invoke("delete_file", { path: `${downloadItem.directory}/${downloadItem.file_name}`, id: downloadItem.id })
+        .then(res => {
+          const targetIndex = this.downloads.indexOf(x => x.id == downloadItem.id);
+          if (targetIndex > -1) {
+            this.downloads.splice(targetIndex, 1);
+          }
+          this.loading = false;
+        })
+        .catch(err => {
+          function onlyUnique(value, index, self) {
+            return self.indexOf(value) === index;
+          }
+          this.errors.push(err);
+          this.errors = this.errors.filter(x => onlyUnique);
+          this.loading = false;
+        });
+    },
+    async removeAllDownloads() {
+      this.loading = true;
+      this.errors = [];
+
+      return invoke("remove_all_downloads")
+        .then(res => {
+          this.downloads = [];
+          this.loading = false;
+        })
+        .catch(err => {
+          function onlyUnique(value, index, self) {
+            return self.indexOf(value) === index;
+          }
+          this.errors.push(err);
+          this.errors = this.errors.filter(x => onlyUnique);
+          this.loading = false;
+        });
+    },
+    async getVideoDetails(url) {
+      return invoke("get_video_details", { url: url });
+    },
+    async queueNewDownload(options) {
+      this.loading = true;
+      this.errors = [];
+
+      console.log(options);
+      return invoke("queue_new_download", {
+        newDownloadItem: options
+      })
+        .then(res => {
+          this.downloads = [res, ...this.downloads];
+          this.loading = false;
+        })
+        .catch(err => {
+          function onlyUnique(value, index, self) {
+            return self.indexOf(value) === index;
+          }
+          this.errors.push(err);
+          this.errors = this.errors.filter(x => onlyUnique);
+          this.loading = false;
+        });
+    },
+    async parsingVideo(downloadItem) {
+      this.loading = true;
+      this.errors = [];
+
+      return invoke("parsing_video", {
+        download_item: downloadItem
+      })
+        .then(res => {
+          this.downloads = this.downloads.map(item => item.id == downloadItem.id ? res : item);
+          this.loading = false;
+        })
+        .catch(err => {
+          function onlyUnique(value, index, self) {
+            return self.indexOf(value) === index;
+          }
+          this.errors.push(err);
+          this.errors = this.errors.filter(x => onlyUnique);
+          this.loading = false;
+        });
+    },
+    async downloadVideo(downloadItem) {
+      this.loading = true;
+      this.errors = [];
+
+      return invoke("download_video", {
+        download_item: downloadItem
+      })
+        .then(res => {
+          this.downloads = this.downloads.map(item => item.id == downloadItem.id ? { ...item, status: 'downloading' } : item);
+          this.loading = false;
+        })
+        .catch(err => {
+          function onlyUnique(value, index, self) {
+            return self.indexOf(value) === index;
+          }
+          this.errors.push(err);
+          this.errors = this.errors.filter(x => onlyUnique);
+          this.loading = false;
+        });
+    },
+    update_download_progress(payload) {
+      let target = this.downloads?.find(x => x.id == payload.id);
+      if (!target) return;
+      target.progress = payload.current_chunk / target.size_in_bytes * 100;
+    },
+    afterDownloadCompleted(payload) {
+      let target = this.downloads?.find(x => x.id == payload);
+      if (!target) return;
+      target.status = 'downloaded';
     },
   }
 });
@@ -85,13 +207,8 @@ export const useDownloadsStore = new Proxy(useDownloadsStoreFactory, {
       store = target.apply(thisArg, argumentsList);
       store.init();
 
-      // listen for event to reload the download list
-      appWindow.listen('downloads-changed', (event) => {
-        store.init();
-      });
-      appWindow.listen('download-progress', (event) => {
-        store.update_progress(event.payload.id, event.payload.current_chunk);
-      });
+      appWindow.listen('on_download_progress', event => store.update_download_progress(event.payload));
+      appWindow.listen('after_download_completed', event => store.afterDownloadCompleted(event.payload));
     }
 
     return store;

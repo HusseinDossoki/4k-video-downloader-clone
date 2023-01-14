@@ -1,4 +1,4 @@
-use super::models::PlaylistVideo;
+use super::models::playlist::*;
 use futures::StreamExt;
 
 pub async fn get_playlist_videos(playlist_id: String) -> Result<Vec<PlaylistVideo>, String> {
@@ -18,7 +18,7 @@ pub async fn get_playlist_videos(playlist_id: String) -> Result<Vec<PlaylistVide
         match item {
             Ok(video) => {
                 result.push(PlaylistVideo {
-                    id: video.id().to_string(),
+                    video_id: video.id().to_string(),
                     title: video.title().to_string(),
                     thumbnail: video.thumbnails().first().unwrap().url.to_string(),
                 });

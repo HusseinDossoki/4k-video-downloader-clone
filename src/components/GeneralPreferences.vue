@@ -3,9 +3,9 @@
     <section class="d-flex">
       <p>Intensity</p>
       <div class="toggles w-100">
-        <select class="w-100 mb-1">
-          <option value="1">Safe - 1 thread</option>
-          <option value="2">Safe - 2 threads</option>
+        <select class="w-100 mb-1" v-model="store.threads_number">
+          <option :value="1">Safe - 1 thread</option>
+          <option :value="2">Safe - 2 threads</option>
         </select>
         <small>
           High intensity might increase overall download performance but it may also lead to temporary IP address ban by
@@ -42,32 +42,32 @@
           </label>
         </div>
         <div class="form-check m-auto">
-          <input class="form-check-input" type="checkbox" v-model="store.skip_playlists_duplicates" id="4">
-          <label class="form-check-label" for="4">
+          <input class="form-check-input" type="checkbox" v-model="store.generate_playlists_m3u" id="5">
+          <label class="form-check-label" for="5">
             Generate .m3u file for downloaded playlists
           </label>
         </div>
         <div class="form-check m-auto">
-          <input class="form-check-input" type="checkbox" v-model="store.skip_playlists_duplicates" id="4">
-          <label class="form-check-label" for="4">
-            Emebed subtitles in video file if possible
+          <input class="form-check-input" type="checkbox" v-model="store.embed_video_subtitles" id="6">
+          <label class="form-check-label" for="6">
+            Embed subtitles in video file if possible
           </label>
         </div>
         <div class="form-check m-auto">
-          <input class="form-check-input" type="checkbox" v-model="store.skip_playlists_duplicates" id="4">
-          <label class="form-check-label" for="4">
+          <input class="form-check-input" type="checkbox" v-model="store.search_audio_tags" id="7">
+          <label class="form-check-label" for="7">
             Search audio tags based on track title
           </label>
         </div>
         <div class="form-check m-auto">
-          <input class="form-check-input" type="checkbox" v-model="store.remove_downloaded_items" id="5">
-          <label class="form-check-label" for="5">
+          <input class="form-check-input" type="checkbox" v-model="store.remove_downloaded_items" id="8">
+          <label class="form-check-label" for="8">
             Remove downloaded items from the list
           </label>
         </div>
         <div class="form-check m-auto">
-          <input class="form-check-input" type="checkbox" v-model="store.remove_downloaded_items" id="5">
-          <label class="form-check-label" for="5">
+          <input class="form-check-input" type="checkbox" v-model="store.submit_download_statistics" id="9">
+          <label class="form-check-label" for="9">
             Submit download statistics
           </label>
         </div>
@@ -78,8 +78,8 @@
       <p></p>
       <div class="toggles w-100" style="margin-left: 11px;">
         <div class="form-check m-auto w-100">
-          <input class="form-check-input" type="checkbox" id="1">
-          <label class="form-check-label" for="1">
+          <input class="form-check-input" type="checkbox" id="10" v-model="store.install_beta_version">
+          <label class="form-check-label" for="10">
             Install Beta versions
           </label>
         </div>
@@ -93,9 +93,8 @@
     <section class="d-flex">
       <p>Language</p>
       <div class="toggles w-100">
-        <select class="w-100 mb-1">
-          <option value="1">System</option>
-          <option value="2">English</option>
+        <select class="w-100 mb-1" v-model="store.language">
+          <option value="en">English</option>
         </select>
       </div>
     </section>
@@ -103,8 +102,29 @@
 </template>
 
 <script setup>
-import { useGeneralPreferencesStore } from "../stores/GeneralPreferencesStore";
-const store = useGeneralPreferencesStore();
+import { watch } from "vue";
+import { usePreferencesStore } from "../stores/PreferencesStore";
+const store = usePreferencesStore();
+
+store.init().then(res => {
+  watch(() => [
+    store.threads_number,
+    store.prevent_system_sleep,
+    store.create_playlist_subdirectory,
+    store.numerate_playlists_files,
+    store.skip_playlists_duplicates,
+    store.generate_playlists_m3u,
+    store.embed_video_subtitles,
+    store.search_audio_tags,
+    store.remove_downloaded_items,
+    store.submit_download_statistics,
+    store.install_beta_version,
+    store.language,
+  ], () => {
+    store.updateGeneral();
+  }, { deep: true });
+});
+
 </script>
 
 <style scoped lang="scss">

@@ -2,17 +2,22 @@
 CREATE TABLE
   downloads (
     id INTEGER NOT NULL PRIMARY KEY,
-    title VARCHAR NULL,
+
+    -- Required when inserting
     url VARCHAR NOT NULL,
-    thumbnail VARCHAR NULL,
-    status VARCHAR NOT NULL DEFAULT 'new', /* new, inprogress, paused, postponed, failed, downloaded */
     directory VARCHAR NOT NULL,
-    length_seconds INTEGER NOT NULL DEFAULT 0, /* time */
-    size_in_bytes INTEGER NOT NULL DEFAULT 0,
-    current_chunk INTEGER NULL, /* downloaded bytes */
-    format VARCHAR NULL,
-    quality VARCHAR NULL,
-    quality_label VARCHAR NULL,
+    format VARCHAR NOT NULL,
+    quality VARCHAR NOT NULL,
+    quality_label VARCHAR NOT NULL,
+    status VARCHAR NOT NULL DEFAULT 'queued', -- queued, parsing, parsed, downloading, paused, postponed, failed, downloaded
+    -- created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    -- Will be updated later 
+    title VARCHAR NULL,
+    file_name VARCHAR NULL,
+    thumbnail VARCHAR NULL,
+    length_seconds INTEGER NULL, -- time
+    size_in_bytes INTEGER NULL,
+    current_chunk INTEGER NULL, -- downloaded bytes
     approx_duration_ms INTEGER NULL
-    -- created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   );

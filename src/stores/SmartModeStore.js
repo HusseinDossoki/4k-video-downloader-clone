@@ -10,13 +10,18 @@ import { invoke } from "@tauri-apps/api/tauri";
  */
 const useSmartModeStoreFactory = defineStore("smartModeStore", {
   state: () => ({
+    // DB
     id: null,
     enabled: false,
     format: null,
     quality: null,
     directory: null,
-    loading: false,
+
+    // Extra data
     lookups: {},
+    
+    // Helpers
+    loading: false,
     errors: []
   }),
   getters: {
@@ -47,11 +52,7 @@ const useSmartModeStoreFactory = defineStore("smartModeStore", {
 
       return invoke("get_smart_mode")
         .then(res => {
-          this.id = res.id;
-          this.enabled = res.enabled;
-          this.format = res.format;
-          this.quality = res.quality;
-          this.directory = res.directory;
+          this.$state = {...this.$state, ...res};
           this.loading = false;
         })
         .catch(err => {
@@ -78,11 +79,7 @@ const useSmartModeStoreFactory = defineStore("smartModeStore", {
           }
         })
         .then(res => {
-          this.id = res.id;
-          this.enabled = res.enabled;
-          this.format = res.format;
-          this.quality = res.quality;
-          this.directory = res.directory;
+          this.$state = {...this.$state, ...res};
           this.loading = false;
         })
         .catch(err => {
@@ -95,11 +92,7 @@ const useSmartModeStoreFactory = defineStore("smartModeStore", {
         });
     },
     refreshState(newState) {
-      this.id = newState.id;
-      this.enabled = newState.enabled;
-      this.format = newState.format;
-      this.quality = newState.quality;
-      this.directory = newState.directory;
+      this.$state = {...this.$state, ...newState};
     }
   }
 });

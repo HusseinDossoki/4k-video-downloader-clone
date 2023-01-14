@@ -1,13 +1,13 @@
 use crate::db::establish_connection;
-use crate::db::models;
+use crate::db::models::download::*;
 use crate::schema::*;
 use diesel::prelude::*;
 use diesel::{QueryDsl, RunQueryDsl};
 use std::cmp::Reverse;
 
-pub fn get_downloads() -> Result<Vec<models::DownloadItem>, String> {
+pub fn get_downloads() -> Result<Vec<DownloadItem>, String> {
     let conn = establish_connection();
-    let result = downloads::dsl::downloads.load::<models::DownloadItem>(&conn);
+    let result = downloads::dsl::downloads.load::<DownloadItem>(&conn);
 
     if result.is_err() {
         return Err("Error when fetching the 'downloads' from the database".to_string());
@@ -20,17 +20,15 @@ pub fn get_downloads() -> Result<Vec<models::DownloadItem>, String> {
     return Ok(ordered);
 }
 
-pub fn add_download_item(url: String, directory: String) -> Result<i32, String> {
+pub fn queue_new_download(options: NewDownloadItem) -> Result<DownloadItem, String> {
     let conn = establish_connection();
 
-    let new_download = models::NewDownloadItem { url, directory };
-
     let result = diesel::insert_into(downloads::table)
-        .values(&new_download)
+        .values(&options)
         .execute(&conn);
 
     if result.is_err() {
-        return Err("Error saving new download item".to_string());
+        return Err("Error saving new download item to the database".to_string());
     }
 
     /*
@@ -48,67 +46,48 @@ pub fn add_download_item(url: String, directory: String) -> Result<i32, String> 
         return Err("Error when fetching the last_insert_rowid".to_string());
     }
 
-    return Ok(new_id_res.unwrap());
+    use downloads::dsl::id;
+
+    let new_download = downloads::dsl::downloads
+        .filter(id.eq(&new_id_res.unwrap()))
+        .first::<DownloadItem>(&conn)
+        .expect("'download' is not found");
+
+    return Ok(new_download);
 }
 
-pub fn update_video_info(
-    params: models::UpdateDownloadItemInfo,
-) -> Result<models::DownloadItem, String> {
+pub fn update_download_info(options: UpdateDownloadItem) -> Result<DownloadItem, String> {
     let conn = establish_connection();
 
-    use downloads::dsl::{id, length_seconds, status, thumbnail, title};
+    use downloads::dsl::{
+        approx_duration_ms, file_name, id, length_seconds, size_in_bytes, status, thumbnail, title,
+    };
 
-    let res = diesel::update(downloads::dsl::downloads.filter(id.eq(&params.id)))
+    let res = diesel::update(downloads::dsl::downloads.filter(id.eq(&options.id)))
         .set((
-            title.eq(params.title),
-            thumbnail.eq(params.thumbnail),
-            length_seconds.eq(params.length_seconds),
-            status.eq("inprogress"),
+            title.eq(options.title),
+            file_name.eq(options.file_name),
+            thumbnail.eq(options.thumbnail),
+            length_seconds.eq(options.length_seconds),
+            size_in_bytes.eq(options.size_in_bytes),
+            approx_duration_ms.eq(options.approx_duration_ms),
+            status.eq("parsed"),
         ))
         .execute(&conn);
 
     if res.is_err() {
-        return Err("Error when updating 'video info' in the database".to_string());
+        return Err("Error when updating 'download info' in the database".to_string());
     }
 
     let updated = downloads::dsl::downloads
-        .filter(id.eq(&params.id))
-        .first::<models::DownloadItem>(&conn)
-        .expect("'video' not found");
+        .filter(id.eq(&options.id))
+        .first::<DownloadItem>(&conn)
+        .expect("'download item' is not found");
 
     return Ok(updated);
 }
 
-pub fn update_video_full_info(
-    params: models::UpdateDownloadItemFullInfo,
-) -> Result<models::DownloadItem, String> {
-    let conn = establish_connection();
-
-    use downloads::dsl::{approx_duration_ms, format, id, quality, quality_label, size_in_bytes};
-
-    let res = diesel::update(downloads::dsl::downloads.filter(id.eq(&params.id)))
-        .set((
-            quality.eq(params.quality),
-            quality_label.eq(params.quality_label),
-            size_in_bytes.eq(params.size_in_bytes),
-            format.eq(params.format),
-            approx_duration_ms.eq(params.approx_duration_ms),
-        ))
-        .execute(&conn);
-
-    if res.is_err() {
-        return Err("Error when updating 'video full info' in the database".to_string());
-    }
-
-    let updated = downloads::dsl::downloads
-        .filter(id.eq(&params.id))
-        .first::<models::DownloadItem>(&conn)
-        .expect("'video' not found");
-
-    return Ok(updated);
-}
-
-pub fn delete_download_item(qid: i32) -> Result<(), String> {
+pub fn remove_download_item(qid: i32) -> Result<(), String> {
     let conn = establish_connection();
 
     use downloads::dsl::id;
@@ -116,7 +95,7 @@ pub fn delete_download_item(qid: i32) -> Result<(), String> {
     let res = diesel::delete(downloads::dsl::downloads.filter(id.eq(&qid))).execute(&conn);
 
     if res.is_err() {
-        return Err("Error when deleting 'video' from the database".to_string());
+        return Err("Error when deleting 'download item' from the database".to_string());
     }
 
     return Ok(());
@@ -128,47 +107,31 @@ pub fn remove_all_downloads() -> Result<(), String> {
     let res = diesel::sql_query("DELETE FROM downloads").execute(&conn);
 
     if res.is_err() {
-        return Err("Error when deleting 'all videos' from the database".to_string());
+        return Err("Error when deleting 'all download itens' from the database".to_string());
     }
 
     return Ok(());
 }
 
-pub fn download_completed(qid: &i32) -> Result<(), String> {
+pub fn update_download_status(qid: &i32, qstatus: &String) -> Result<DownloadItem, String> {
     let conn = establish_connection();
 
     use downloads::dsl::{id, status};
 
     let res = diesel::update(downloads::dsl::downloads.filter(id.eq(&qid)))
-        .set(status.eq("downloaded"))
+        .set(status.eq(qstatus))
         .execute(&conn);
 
     if res.is_err() {
         return Err(
-            "Error when updating 'video' status to 'downloaded' in the database".to_string(),
+            "Error when updating 'download item' status in the database".to_string(),
         );
     }
 
-    return Ok(());
-}
+    let updated = downloads::dsl::downloads
+        .filter(id.eq(&qid))
+        .first::<DownloadItem>(&conn)
+        .expect("'download item' is not found");
 
-pub fn update_download_progress(
-    qid: &i32,
-    qcurrent_chunk: i32,
-) -> Result<(), String> {
-    let conn = establish_connection();
-
-    use downloads::dsl::{id, current_chunk};
-
-    let res = diesel::update(downloads::dsl::downloads.filter(id.eq(qid)))
-        .set(current_chunk.eq(qcurrent_chunk))
-        .execute(&conn);
-
-    if res.is_err() {
-        return Err(
-            "Error when updating 'current_chunk' in the database".to_string(),
-        );
-    }
-
-    return Ok(());
+    return Ok(updated);
 }

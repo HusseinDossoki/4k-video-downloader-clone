@@ -1,32 +1,5 @@
-use serde::{Deserialize, Serialize};
 use serde_enum_str::{Deserialize_enum_str, Serialize_enum_str};
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct ProgressInfo {
-    pub(crate) id: i32,
-    pub(crate) current_chunk: i32,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Lookups {
-    pub formats: Vec<String>,
-    pub audio_qualities: Vec<String>,
-    pub quality_labels: Vec<String>,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct YoutubeVideoInfo {
-    pub title: String,
-    pub length_seconds: u64,
-    pub thumbnail: String,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct PlaylistVideo {
-    pub id: String,
-    pub title: String,
-    pub thumbnail: String,
-}
 
 #[derive(
     Clone,
@@ -171,18 +144,3 @@ pub enum QualityLabel {
     P4320Hz60HDR,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct VideoDetails {
-    pub title: String,
-    pub length_seconds: u64,
-    pub thumbnail: String,
-    pub video_streams: Vec<VideoDetailsStream>,
-    pub audio_streams: Vec<VideoDetailsStream>,
-}
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct VideoDetailsStream {
-    pub size_in_bytes: i32,
-    pub format: Option<String>,
-    pub quality: Option<String>,
-    pub quality_label: Option<String>,
-}

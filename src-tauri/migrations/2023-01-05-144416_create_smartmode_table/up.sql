@@ -2,13 +2,10 @@
 CREATE TABLE
   smartmode (
     id INTEGER NOT NULL PRIMARY KEY,
-    enabled BOOLEAN NOT NULL DEFAULT 'f',
-    format VARCHAR NOT NULL DEFAULT '',
-    quality TEXT NOT NULL DEFAULT '',
-    directory TEXT NOT NULL DEFAULT ''
+    enabled BOOLEAN NOT NULL DEFAULT 0,
+    format VARCHAR NULL,
+    quality VARCHAR NULL,
+    directory VARCHAR NULL
   );
 
-INSERT INTO
-  smartmode (enabled, format, quality, directory)
-VALUES
-  (0, '', '', '');
+INSERT INTO smartmode DEFAULT VALUES;

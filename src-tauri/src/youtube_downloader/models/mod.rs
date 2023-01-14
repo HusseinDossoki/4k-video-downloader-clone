@@ -1,4 +1,3 @@
-pub mod models;
+pub mod lookups;
 pub mod video;
-pub mod stream;
 pub mod playlist;

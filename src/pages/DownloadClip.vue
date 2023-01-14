@@ -46,7 +46,8 @@
     </section>
     <footer>
       <button class="button mx-2" @click="closeWindow">Cancel</button>
-      <button @click="download" class="button submit" :class="{ disabled: !isValid }" :disabled="!isValid">Download</button>
+      <button @click="download" class="button submit" :class="{ disabled: !isValid }"
+        :disabled="!isValid">Download</button>
     </footer>
   </div>
   <div class="loading" v-if="!videoDetails">
@@ -63,9 +64,10 @@ import { appWindow } from '@tauri-apps/api/window';
 import { open } from '@tauri-apps/api/dialog';
 import { ref, watch, computed } from "vue";
 import { readText } from '@tauri-apps/api/clipboard';
-import { invoke } from "@tauri-apps/api/tauri";
 import { emit } from '@tauri-apps/api/event';
+import { useDownloadsStore } from "../stores/DownloadsStore";
 
+const downloadsStore = useDownloadsStore();
 const url = ref(null);
 const directory = ref(null);
 const type = ref("video");
@@ -79,7 +81,7 @@ readText()
   .then(res => {
     url.value = res;
 
-    invoke("get_video_details", { url: url.value })
+    downloadsStore.getVideoDetails(url.value)
       .then(res => {
         videoDetails.value = res;
         onTypeChnages();
@@ -102,9 +104,12 @@ function download() {
     directory: directory.value,
     format: format.value,
     quality: selectedStream.value.quality,
-    qualityLabel: selectedStream.value.quality_label,
+    quality_label: selectedStream.value.quality_label,
   };
-  emit('download_video', param).then(e => appWindow.close());
+
+  downloadsStore.queueNewDownload(param).then(x => {
+    appWindow.close();
+  });
 }
 
 function onTypeChnages() {
@@ -270,6 +275,7 @@ select {
   margin-top: 20%;
   text-align: center;
 }
+
 .button.submit {
   background-color: #3478F6;
 }

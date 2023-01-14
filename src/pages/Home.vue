@@ -1,7 +1,7 @@
 <template>
   <AppHeader />
-  <EmptyList v-if="downloadsStore.emptyList" />
-  <VideosList v-if="!downloadsStore.emptyList" />
+  <EmptyList v-if="downloadsStore.isEmptyList" />
+  <VideosList v-if="!downloadsStore.isEmptyList" />
   <AppFooter />
 </template>
 

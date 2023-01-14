@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import { watch } from "vue";
 import { invoke } from "@tauri-apps/api/tauri";
 
 /**
@@ -9,15 +8,36 @@ import { invoke } from "@tauri-apps/api/tauri";
  * https://github.com/vuejs/pinia/discussions/794 => (Proxy, Object.assign)
  * We will use the Proxy solution
  */
-const useGeneralPreferencesStoreFactory = defineStore("generalPreferencesStore", {
+const usePreferencesStoreFactory = defineStore("preferencesStore", {
   state: () => ({
-    // Data
     id: null,
+    // General
+    threads_number: null,
     prevent_system_sleep: false,
     create_playlist_subdirectory: false,
     numerate_playlists_files: false,
     skip_playlists_duplicates: false,
+    generate_playlists_m3u: false,
+    embed_video_subtitles: false,
+    search_audio_tags: false,
     remove_downloaded_items: false,
+    submit_download_statistics: false,
+    install_beta_version: false,
+    language: null,
+
+    // Connection
+    speed: null,
+
+    // Notifications
+    show_notification_when_downloads_complete: false,
+    show_notification_about_new_videos_from_channel_subscriptions: false,
+    play_notification_sound: false,
+    show_progress_on_dock_icon: false,
+    confirm_app_exit_if_there_are_incomplete_downloads: false,
+    confirm_before_item_deleting: false,
+    confirm_before_subscription_deleting: false,
+    ask_to_select_between_single_video_and_playlist_in_case_of_ambiguity: false,
+    ask_to_download_channel_if_multiple_videos_were_downloaded_from_it: false,
 
     // Helpers
     loading: false,
@@ -31,14 +51,9 @@ const useGeneralPreferencesStoreFactory = defineStore("generalPreferencesStore",
       this.loading = true;
       this.errors = [];
 
-      return invoke("get_general_preferences")
+      return invoke("get_preferences")
         .then(res => {
-          this.id = res.id;
-          this.prevent_system_sleep = res.prevent_system_sleep;
-          this.create_playlist_subdirectory = res.create_playlist_subdirectory;
-          this.numerate_playlists_files = res.numerate_playlists_files;
-          this.skip_playlists_duplicates = res.skip_playlists_duplicates;
-          this.remove_downloaded_items = res.remove_downloaded_items;
+          this.$state = { ...this.$state, ...res };
           this.loading = false;
         })
         .catch(err => {
@@ -48,22 +63,16 @@ const useGeneralPreferencesStoreFactory = defineStore("generalPreferencesStore",
           this.errors.push(err);
           this.errors = this.errors.filter(x => onlyUnique);
           this.loading = false;
+          console.error(err);
         });
     },
-    async update() {
+    async updateGeneral() {
       this.loading = true;
       this.errors = [];
 
       return invoke("update_general_preferences",
         {
-          params: {
-            id: this.id,
-            prevent_system_sleep: this.prevent_system_sleep,
-            create_playlist_subdirectory: this.create_playlist_subdirectory,
-            numerate_playlists_files: this.numerate_playlists_files,
-            skip_playlists_duplicates: this.skip_playlists_duplicates,
-            remove_downloaded_items: this.remove_downloaded_items,
-          }
+          params: { ...this.$state }
         })
         .then(res => {
           this.loading = false;
@@ -75,6 +84,28 @@ const useGeneralPreferencesStoreFactory = defineStore("generalPreferencesStore",
           this.errors.push(err);
           this.errors = this.errors.filter(x => onlyUnique);
           this.loading = false;
+          console.error(err);
+        });
+    },
+    async updateNotifications() {
+      this.loading = true;
+      this.errors = [];
+
+      return invoke("update_notifications_preferences",
+        {
+          params: { ...this.$state }
+        })
+        .then(res => {
+          this.loading = false;
+        })
+        .catch(err => {
+          function onlyUnique(value, index, self) {
+            return self.indexOf(value) === index;
+          }
+          this.errors.push(err);
+          this.errors = this.errors.filter(x => onlyUnique);
+          this.loading = false;
+          console.error(err);
         });
     },
   }
@@ -82,21 +113,11 @@ const useGeneralPreferencesStoreFactory = defineStore("generalPreferencesStore",
 
 
 let store = null;
-export const useGeneralPreferencesStore = new Proxy(useGeneralPreferencesStoreFactory, {
+export const usePreferencesStore = new Proxy(usePreferencesStoreFactory, {
   apply: (target, thisArg, argumentsList) => {
     if (!store) {
       store = target.apply(thisArg, argumentsList);
-
-      store.init();
-
-      watch(() => [
-        store.prevent_system_sleep,
-        store.create_playlist_subdirectory,
-        store.numerate_playlists_files,
-        store.skip_playlists_duplicates,
-        store.remove_downloaded_items
-      ], store.update, { deep: true });
-
+      // store.init();
     }
 
     return store;
