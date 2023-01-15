@@ -40,3 +40,18 @@ pub struct UpdateDownloadItem {
     pub size_in_bytes: i32,
     pub approx_duration_ms: i32,
 }
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct NewParsedDownloadItem {
+    pub url: String,
+    pub directory: String,
+    pub format: String,
+    pub quality: String,
+    pub quality_label: String,
+    pub title: String,
+    pub file_name: String,
+    pub thumbnail: String,
+    pub length_seconds: i32,
+    pub size_in_bytes: i32,
+    pub approx_duration_ms: i32,
+}

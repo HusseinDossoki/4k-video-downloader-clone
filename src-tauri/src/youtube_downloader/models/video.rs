@@ -12,6 +12,7 @@ pub struct Lookups {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct VideoDetails {
     pub title: String,
+    pub file_name: String,
     pub length_seconds: u64,
     pub thumbnail: String,
     pub video_streams: Vec<StreamDetails>,
@@ -24,6 +25,7 @@ pub struct StreamDetails {
     pub format: Option<String>,
     pub quality: Option<String>,
     pub quality_label: Option<String>,
+    pub approx_duration_ms: i32,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]

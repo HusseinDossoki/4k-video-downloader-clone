@@ -37,6 +37,7 @@ fn main() {
             commands::get_downloads,
             commands::get_video_details,
             commands::queue_new_download,
+            commands::queue_parsed_download,
             commands::parsing_video,
             commands::download_video,
         ])

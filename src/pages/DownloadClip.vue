@@ -104,9 +104,15 @@ function download() {
     format: format.value,
     quality: selectedStream.value.quality,
     quality_label: selectedStream.value.quality_label,
+    title: videoDetails.value.title,
+    file_name: videoDetails.value.file_name,
+    thumbnail: videoDetails.value.thumbnail,
+    length_seconds: videoDetails.value.length_seconds,
+    size_in_bytes: selectedStream.value.size_in_bytes,
+    approx_duration_ms: selectedStream.value.approx_duration_ms,
   };
 
-  downloadsStore.queueNewDownload(param).then(res => {
+  downloadsStore.queueParsedDownload(param).then(res => {
     emit('reload_downloads', res).then(y => {
       appWindow.close();
     });

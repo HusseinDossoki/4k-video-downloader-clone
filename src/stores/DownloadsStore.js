@@ -17,7 +17,8 @@ const useDownloadsStoreFactory = defineStore("downloadsStore", {
 
     // Helpers
     loading: false,
-    errors: []
+    errors: [],
+    interval: null
   }),
   getters: {
     isEmptyList(state) {
@@ -131,7 +132,26 @@ const useDownloadsStoreFactory = defineStore("downloadsStore", {
         .then(res => {
           this.downloads = [res, ...this.downloads];
           this.loading = false;
-          emit("process_queue", this.downloads);
+        })
+        .catch(err => {
+          function onlyUnique(value, index, self) {
+            return self.indexOf(value) === index;
+          }
+          this.errors.push(err);
+          this.errors = this.errors.filter(x => onlyUnique);
+          this.loading = false;
+        });
+    },
+    async queueParsedDownload(options) {
+      this.loading = true;
+      this.errors = [];
+
+      return invoke("queue_parsed_download", {
+        options: options
+      })
+        .then(res => {
+          this.downloads = [res, ...this.downloads];
+          this.loading = false;
         })
         .catch(err => {
           function onlyUnique(value, index, self) {
@@ -190,7 +210,8 @@ const useDownloadsStoreFactory = defineStore("downloadsStore", {
       this.downloads = this.downloads.map(item => item.id == payload.id ? { ...item, status: payload.status } : item);
     },
     initQueuProcess() {
-      setInterval(() => {
+      if (this.interval) return;
+      this.interval = setInterval(() => {
 
         let currentDownloading = this.downloads.filter(x => x.status == 'downloading').length;
 
@@ -198,7 +219,7 @@ const useDownloadsStoreFactory = defineStore("downloadsStore", {
           if (item.status == 'queued') {
             this.parsingVideo(item);
           } else if (item.status == 'parsed' && currentDownloading == 0) {
-            downloadsCount++;
+            currentDownloading++;
             this.downloadVideo(item);
           }
         });

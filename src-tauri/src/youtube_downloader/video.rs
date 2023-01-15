@@ -52,6 +52,7 @@ pub async fn get_video_details(url: &String) -> Result<VideoDetails, String> {
             quality_label: Some(stream::quality_label_string(&s.quality_label.clone())),
             format: Some(s.mime.to_string().clone()),
             size_in_bytes: s.content_length().await.unwrap_or(0) as i32,
+            approx_duration_ms: s.approx_duration_ms.unwrap_or(0) as i32,
         });
     }
 
@@ -59,6 +60,7 @@ pub async fn get_video_details(url: &String) -> Result<VideoDetails, String> {
 
     let result = VideoDetails {
         title: video.title().to_string(),
+        file_name: video.title().to_string() + ".mp4",
         thumbnail: video
             .video_details()
             .thumbnails

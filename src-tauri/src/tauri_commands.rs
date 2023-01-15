@@ -86,16 +86,47 @@ pub async fn get_video_details(url: String) -> Result<VideoDetails, String> {
 }
 
 #[tauri::command]
-pub async fn queue_new_download(new_download_item: NewDownloadItem) -> Result<DownloadItem, String> {
+pub async fn queue_new_download(
+    new_download_item: NewDownloadItem,
+) -> Result<DownloadItem, String> {
     let result = downloads::queue_new_download(new_download_item.clone());
 
     if result.is_err() {
         return Err(result.unwrap_err());
     }
-    
+
     let new_download = result.unwrap();
 
     return Ok(new_download);
+}
+
+#[tauri::command]
+pub async fn queue_parsed_download(options: NewParsedDownloadItem) -> Result<DownloadItem, String> {
+    let insert_options = NewDownloadItem {
+        url: options.url,
+        directory: options.directory,
+        format: options.format,
+        quality: options.quality,
+        quality_label: options.quality_label,
+    };
+    let insert_result = downloads::queue_new_download(insert_options.clone());
+
+    if insert_result.is_err() {
+        return Err(insert_result.unwrap_err());
+    }
+
+    let new_id = insert_result.unwrap().id;
+
+    let update_options = UpdateDownloadItem {
+        id: new_id,
+        title: options.title,
+        thumbnail: options.thumbnail,
+        file_name: options.file_name,
+        length_seconds: options.length_seconds,
+        size_in_bytes: options.size_in_bytes,
+        approx_duration_ms: options.approx_duration_ms,
+    };
+    return downloads::update_download_info(update_options);
 }
 
 #[tauri::command]
