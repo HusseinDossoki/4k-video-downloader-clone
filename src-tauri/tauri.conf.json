@@ -12,17 +12,19 @@
   },
   "tauri": {
     "allowlist": {
-      "all": true,
+      "all": false,
       "clipboard": {
-        "all": true,
-        "readText": true,
-        "writeText": true
+        "all": true
       },
       "dialog": {
-        "all": true,
-        "open": true,
-        "save": true
-      }
+        "all": true
+      },
+      "window": {
+        "all": true
+      },
+      "fs": {
+        "all": true
+      } 
     },
     "bundle": {
       "active": true,
