@@ -167,8 +167,8 @@ pub async fn download_video(download_item: &DownloadItem, window: Window) {
             window.emit(ON_DOWNLOAD_PROGRESS, download_progress).unwrap();
         })
         .connect_on_complete_closure(move |_| {
-            db::downloads::update_download_status(&download_id, &"downloaded".to_string()).unwrap();
-            window2.emit(AFTER_DOWNLOAD_COMPLETED, &download_id).unwrap();
+            let result = db::downloads::update_download_status(&download_id, &"downloaded".to_string()).unwrap();
+            window2.emit(ON_DOWNLOAD_STATUS_CHANGES, result).unwrap();
         });
 
     stream

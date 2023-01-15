@@ -172,6 +172,19 @@ function onContextMenu(e, video) {
     ]
   });
 }
+
+downloadsStore.processQueue();
+// listenForChanges();
+// function listenForChanges() {
+//   setInterval(() => {
+//     let downloading = downloadsStore.downloads.filter(x => x.status == 'downloading').length;
+//     downloadsStore.downloads.forEach(item => {
+//       if (item.status == 'queued') {
+//         downloadsStore.parsingVideo(item);
+//       }
+//     });
+//   }, 3000);
+// }
 </script>
 
 <style scoped lang="scss">

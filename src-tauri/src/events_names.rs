@@ -1,2 +1,3 @@
+pub const ON_DOWNLOAD_STATUS_CHANGES: &'static str = "on_download_status_changes";
 pub const ON_DOWNLOAD_PROGRESS: &'static str = "on_download_progress";
-pub const AFTER_DOWNLOAD_COMPLETED: &'static str = "after_download_completed";
+pub const RELOAD_SMART_MODE: &'static str = "reload_smart_mode";

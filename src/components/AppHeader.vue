@@ -33,12 +33,12 @@ const downloadsStore = useDownloadsStore();
 const validYoutubeUrl = ref(false);
 const copiedUrl = ref(null);
 
-// listen_new_video();
-// async function listen_new_video() {
-//   const unlisten = await listen('download_video', (event) => {
-//     downloadsStore.queueNewDownload(event.payload);
-//   });
-// }
+listen_new_video();
+async function listen_new_video() {
+  const unlisten = await listen('reload_downloads', (event) => {
+    downloadsStore.init();
+  });
+}
 
 async function openSmartMode() {
   const webview = new WebviewWindow("SmartMode", {
@@ -52,7 +52,7 @@ async function openSmartMode() {
   });
 
 
-  const unlisten = await webview.listen('smart-mode-changed', (event) => {
+  const unlisten = await webview.listen('reload_smart_mode', (event) => {
     smartModeStore.refreshState(event.payload);
   });
 }

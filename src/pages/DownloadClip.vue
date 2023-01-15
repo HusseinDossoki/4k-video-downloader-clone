@@ -85,7 +85,6 @@ readText()
       .then(res => {
         videoDetails.value = res;
         onTypeChnages();
-        console.log(res);
       })
       .catch(err => {
         console.log(err);
@@ -107,8 +106,10 @@ function download() {
     quality_label: selectedStream.value.quality_label,
   };
 
-  downloadsStore.queueNewDownload(param).then(x => {
-    appWindow.close();
+  downloadsStore.queueNewDownload(param).then(res => {
+    emit('reload_downloads', res).then(y => {
+      appWindow.close();
+    });
   });
 }
 

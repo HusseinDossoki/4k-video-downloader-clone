@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { invoke } from "@tauri-apps/api/tauri";
 import { appWindow } from '@tauri-apps/api/window';
+import { emit } from '@tauri-apps/api/event';
 
 /**
  * We need a way to watch the state and then update them in db.
@@ -35,6 +36,7 @@ const useDownloadsStoreFactory = defineStore("downloadsStore", {
         .then(res => {
           this.downloads = res;
           this.loading = false;
+          this.initQueuProcess();
         })
         .catch(err => {
           function onlyUnique(value, index, self) {
@@ -68,10 +70,7 @@ const useDownloadsStoreFactory = defineStore("downloadsStore", {
 
       return invoke("remove_download_item", { id: downloadItem.id })
         .then(res => {
-          const targetIndex = this.downloads.indexOf(x => x.id == downloadItem.id);
-          if (targetIndex > -1) {
-            this.downloads.splice(targetIndex, 1);
-          }
+          this.downloads = this.downloads.filter(x => x.id != downloadItem.id);
           this.loading = false;
         })
         .catch(err => {
@@ -89,10 +88,7 @@ const useDownloadsStoreFactory = defineStore("downloadsStore", {
 
       return invoke("delete_file", { path: `${downloadItem.directory}/${downloadItem.file_name}`, id: downloadItem.id })
         .then(res => {
-          const targetIndex = this.downloads.indexOf(x => x.id == downloadItem.id);
-          if (targetIndex > -1) {
-            this.downloads.splice(targetIndex, 1);
-          }
+          this.downloads = this.downloads.filter(x => x.id != downloadItem.id);
           this.loading = false;
         })
         .catch(err => {
@@ -129,13 +125,13 @@ const useDownloadsStoreFactory = defineStore("downloadsStore", {
       this.loading = true;
       this.errors = [];
 
-      console.log(options);
       return invoke("queue_new_download", {
         newDownloadItem: options
       })
         .then(res => {
           this.downloads = [res, ...this.downloads];
           this.loading = false;
+          emit("process_queue", this.downloads);
         })
         .catch(err => {
           function onlyUnique(value, index, self) {
@@ -151,7 +147,7 @@ const useDownloadsStoreFactory = defineStore("downloadsStore", {
       this.errors = [];
 
       return invoke("parsing_video", {
-        download_item: downloadItem
+        downloadItem: downloadItem
       })
         .then(res => {
           this.downloads = this.downloads.map(item => item.id == downloadItem.id ? res : item);
@@ -170,11 +166,12 @@ const useDownloadsStoreFactory = defineStore("downloadsStore", {
       this.loading = true;
       this.errors = [];
 
+      this.downloads = this.downloads.map(item => item.id == downloadItem.id ? { ...item, status: 'downloading' } : item);
+
       return invoke("download_video", {
-        download_item: downloadItem
+        downloadItem: downloadItem
       })
         .then(res => {
-          this.downloads = this.downloads.map(item => item.id == downloadItem.id ? { ...item, status: 'downloading' } : item);
           this.loading = false;
         })
         .catch(err => {
@@ -186,16 +183,28 @@ const useDownloadsStoreFactory = defineStore("downloadsStore", {
           this.loading = false;
         });
     },
-    update_download_progress(payload) {
-      let target = this.downloads?.find(x => x.id == payload.id);
-      if (!target) return;
-      target.progress = payload.current_chunk / target.size_in_bytes * 100;
+    updateDownloadProgress(payload) {
+      this.downloads = this.downloads.map(item => item.id == payload.id ? { ...item, progress: payload.current_chunk / item.size_in_bytes * 100 } : item);
     },
-    afterDownloadCompleted(payload) {
-      let target = this.downloads?.find(x => x.id == payload);
-      if (!target) return;
-      target.status = 'downloaded';
+    onDownloadStatusChanges(payload) {
+      this.downloads = this.downloads.map(item => item.id == payload.id ? { ...item, status: payload.status } : item);
     },
+    initQueuProcess() {
+      setInterval(() => {
+
+        let currentDownloading = this.downloads.filter(x => x.status == 'downloading').length;
+
+        this.downloads.forEach(item => {
+          if (item.status == 'queued') {
+            this.parsingVideo(item);
+          } else if (item.status == 'parsed' && currentDownloading == 0) {
+            downloadsCount++;
+            this.downloadVideo(item);
+          }
+        });
+
+      }, 2000);
+    }
   }
 });
 
@@ -207,8 +216,8 @@ export const useDownloadsStore = new Proxy(useDownloadsStoreFactory, {
       store = target.apply(thisArg, argumentsList);
       store.init();
 
-      appWindow.listen('on_download_progress', event => store.update_download_progress(event.payload));
-      appWindow.listen('after_download_completed', event => store.afterDownloadCompleted(event.payload));
+      appWindow.listen('on_download_progress', event => store.updateDownloadProgress(event.payload));
+      appWindow.listen('on_download_status_changes', event => store.onDownloadStatusChanges(event.payload));
     }
 
     return store;

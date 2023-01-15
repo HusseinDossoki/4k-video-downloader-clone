@@ -16,7 +16,7 @@ pub fn delete_file(path: String, id: i32) -> Result<(), String> {
     let result = downloads::remove_download_item(id);
 
     if result.is_ok() {
-        let _ = file_system::delete_file(path).unwrap();
+        let _ = file_system::delete_file(path).unwrap_or(());
     }
 
     return result;
@@ -51,7 +51,7 @@ pub fn update_smart_mode(
 
     if result.is_ok() {
         window
-            .emit("smart-mode-changed", result.clone().unwrap())
+            .emit(RELOAD_SMART_MODE, result.clone().unwrap())
             .unwrap();
     }
 
@@ -86,14 +86,33 @@ pub async fn get_video_details(url: String) -> Result<VideoDetails, String> {
 }
 
 #[tauri::command]
-pub async fn queue_new_download(
-    new_download_item: NewDownloadItem,
-) -> Result<DownloadItem, String> {
-    return downloads::queue_new_download(new_download_item.clone());
+pub async fn queue_new_download(new_download_item: NewDownloadItem) -> Result<DownloadItem, String> {
+    let result = downloads::queue_new_download(new_download_item.clone());
+
+    if result.is_err() {
+        return Err(result.unwrap_err());
+    }
+    
+    let new_download = result.unwrap();
+
+    return Ok(new_download);
 }
 
 #[tauri::command]
-pub async fn parsing_video(download_item: DownloadItem) -> Result<DownloadItem, String> {
+pub async fn parsing_video(
+    download_item: DownloadItem,
+    window: Window,
+) -> Result<DownloadItem, String> {
+    let result = downloads::update_download_status(&download_item.id, &"parsing".to_string());
+
+    if result.is_err() {
+        return Err(result.unwrap_err());
+    }
+
+    window
+        .emit(ON_DOWNLOAD_STATUS_CHANGES, result.unwrap())
+        .unwrap();
+
     let parsing_result = video::parsing_video(
         &download_item.url,
         &Some(download_item.format.clone()),
@@ -120,9 +139,9 @@ pub async fn parsing_video(download_item: DownloadItem) -> Result<DownloadItem, 
 #[tauri::command]
 pub async fn download_video(download_item: DownloadItem, window: Window) -> Result<(), String> {
     let result = downloads::update_download_status(&download_item.id, &"downloading".to_string());
-    
+
     if result.is_err() {
-        return Err(result.unwrap_err());
+        return Err(result.err().unwrap());
     }
 
     video::download_video(&download_item, window).await;
