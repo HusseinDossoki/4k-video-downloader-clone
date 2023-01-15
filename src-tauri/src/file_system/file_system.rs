@@ -20,15 +20,15 @@ pub fn show_in_folder(path: String) {
     {
         if path.contains(",") {
             // see https://gitlab.freedesktop.org/dbus/dbus/-/issues/76
-            let new_path = match metadata(&path).unwrap().is_dir() {
-                true => path,
-                false => {
-                    let mut path2 = PathBuf::from(path);
-                    path2.pop();
-                    path2.into_os_string().into_string().unwrap()
-                }
-            };
-            Command::new("xdg-open").arg(&new_path).spawn().unwrap();
+            // let new_path = match metadata(&path).unwrap().is_dir() {
+            //     true => path,
+            //     false => {
+            //         let mut path2 = PathBuf::from(path);
+            //         path2.pop();
+            //         path2.into_os_string().into_string().unwrap()
+            //     }
+            // };
+            // Command::new("xdg-open").arg(&new_path).spawn().unwrap();
         } else {
             Command::new("dbus-send")
                 .args([
