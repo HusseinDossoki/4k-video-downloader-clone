@@ -7,16 +7,16 @@ use crate::youtube_downloader::video;
 use tauri::Window;
 
 #[tauri::command]
-pub fn show_in_folder(path: String) {
-    file_system::show_in_folder(path);
+pub fn show_in_folder(directory: String, file_name: String) {
+    file_system::show_in_folder(directory, file_name);
 }
 
 #[tauri::command]
-pub fn delete_file(path: String, id: i32) -> Result<(), String> {
+pub fn delete_file(directory: String, file_name: String, id: i32) -> Result<(), String> {
     let result = downloads::remove_download_item(id);
 
     if result.is_ok() {
-        let _ = file_system::delete_file(path).unwrap_or(());
+        let _ = file_system::delete_file(directory, file_name).unwrap_or(());
     }
 
     return result;

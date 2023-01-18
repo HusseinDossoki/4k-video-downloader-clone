@@ -1,17 +1,22 @@
-use std::process::Command;
+use std::{process::Command, path::Path};
 
-pub fn delete_file(path: String) -> Result<(), String> {
+pub fn delete_file(directory: String, file_name: String) -> Result<(), String> {
+    let path = Path::new(&directory).join(&file_name);
+
     let result = std::fs::remove_file(&path);
     if result.is_err() {
         return Err("File is not exist to be deleted".to_string());
     }
     return Ok(());
 }
-pub fn show_in_folder(path: String) {
+pub fn show_in_folder(directory: String, file_name: String) {
+    let binding = Path::new(&directory).join(&file_name);
+    let path = binding.to_str().unwrap();
+
     #[cfg(target_os = "windows")]
     {
         Command::new("explorer")
-            .args(["/select,", &path]) // The comma after select is not a typo
+            .args(["/select,", path]) // The comma after select is not a typo
             .spawn()
             .unwrap();
     }
@@ -47,6 +52,6 @@ pub fn show_in_folder(path: String) {
 
     #[cfg(target_os = "macos")]
     {
-        Command::new("open").args(["-R", &path]).spawn().unwrap();
+        Command::new("open").args(["-R", path]).spawn().unwrap();
     }
 }

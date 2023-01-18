@@ -52,7 +52,7 @@ const useDownloadsStoreFactory = defineStore("downloadsStore", {
       this.loading = true;
       this.errors = [];
 
-      return invoke("show_in_folder", { path: `${downloadItem.directory}/${downloadItem.file_name}` })
+      return invoke("show_in_folder", { directory: downloadItem.directory, fileName: downloadItem.file_name })
         .then(res => {
           this.loading = false;
         })
@@ -87,7 +87,7 @@ const useDownloadsStoreFactory = defineStore("downloadsStore", {
       this.loading = true;
       this.errors = [];
 
-      return invoke("delete_file", { path: `${downloadItem.directory}/${downloadItem.file_name}`, id: downloadItem.id })
+      return invoke("delete_file", { directory: downloadItem.directory, fileName: downloadItem.file_name, id: downloadItem.id })
         .then(res => {
           this.downloads = this.downloads.filter(x => x.id != downloadItem.id);
           this.loading = false;
