@@ -1,3 +1,5 @@
+use std::path::Path;
+
 use super::models::lookups::*;
 use super::models::video::*;
 use super::stream;
@@ -151,11 +153,7 @@ pub async fn download_video(download_item: &DownloadItem, window: Window) {
     .unwrap()
     .stream;
 
-    let file_path = format!(
-        "{}/{}",
-        &download_item.directory.clone(),
-        &download_item.file_name.clone().unwrap()
-    );
+    let file_path = Path::new( &download_item.directory.clone()).join(&download_item.file_name.clone().unwrap());
 
     let download_id = download_item.id;
     let window2 = window.clone();
