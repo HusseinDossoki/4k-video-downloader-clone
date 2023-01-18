@@ -20,7 +20,7 @@ strum_macros = "*"
 serde-enum-str = "0.3"
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.1", features = ["clipboard-all", "dialog-all", "fs-all", "shell-open", "window-all"] }
+tauri = { version = "1.1", features = ["clipboard-all", "dialog-all", "fs-all", "process-relaunch", "shell-open", "updater", "window-all"] }
 futures = "*"
 # rustube = { version = "0.6.0", features = ["callback"] } # Offical package
 rustube = { git = "https://github.com/Discursif/rustube", branch = "master", features = ["callback"]  } # Forked from rustube to Fix download speed issue (Not stable)

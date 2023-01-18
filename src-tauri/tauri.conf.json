@@ -13,6 +13,12 @@
   "tauri": {
     "allowlist": {
       "all": false,
+      "process": {
+        "all": false,
+        "exit": false,
+        "relaunch": true,
+        "relaunchDangerousAllowSymlinkMacos": false
+      },
       "shell": {
         "all": false,
         "open": true
@@ -67,7 +73,12 @@
       "csp": null
     },
     "updater": {
-      "active": false
+      "active": true,
+      "endpoints": [
+        "https://tauri-update-server.herokuapp.com/tauri-releases/clone-4k-video-downloader/{{target}}/{{current_version}}"
+      ],
+      "dialog": true,
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDcyREEwRjdFOTE4QkQzQkIKUldTNzA0dVJmZy9hY29pNnY4S3dGOFAxK2g5R25jUTA4VG5WdUFTaStOWEo5Q2xIRmZNNnI4YWUK"
     },
     "windows": [
       {
