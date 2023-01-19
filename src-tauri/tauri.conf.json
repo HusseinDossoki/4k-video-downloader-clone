@@ -76,7 +76,7 @@
       "csp": null
     },
     "updater": {
-      "active": true,
+      "active": false,
       "endpoints": [
         "https://tauri-update-server.herokuapp.com/tauri-releases/clone-4k-video-downloader/{{target}}/{{current_version}}"
       ],
