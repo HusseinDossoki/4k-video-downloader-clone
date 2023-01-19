@@ -3,7 +3,7 @@
     <div class="link-container">
       <div class="link past-link" @click="download">
         <p class="link-icon"><i class="fa-solid fa-circle-plus"></i></p>
-        <p class="link-text">Past Link</p>
+        <p class="link-text">Paste Link</p>
         <i v-if="validYoutubeUrl" class="fa-brands fa-youtube"></i>
       </div>
       <div class="link smart-mode" @click="openSmartMode">

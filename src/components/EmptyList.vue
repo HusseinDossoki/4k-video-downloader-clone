@@ -2,7 +2,7 @@
   <section class="body-container">
     <img src="../assets/empty-list.png" alt="">
     <p class="description">
-      <strong>Copy</strong> any YouTube video, playlist or channel link and click <strong>Past Link</strong>.
+      <strong>Copy</strong> any YouTube video, playlist or channel link and click <strong>Paste Link</strong>.
       <br>
       Grab videos with subtitles and annotations.
     </p>
