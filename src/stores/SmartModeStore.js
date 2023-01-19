@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { invoke } from "@tauri-apps/api/tauri";
+import { downloadDir } from "@tauri-apps/api/path";
 
 /**
  * We need a way to watch the state and then update them in db.
@@ -51,8 +52,11 @@ const useSmartModeStoreFactory = defineStore("smartModeStore", {
       this.errors = [];
 
       return invoke("get_smart_mode")
-        .then(res => {
+        .then(async res => {
           this.$state = {...this.$state, ...res};
+          if(!this.directory) {
+            this.directory = await downloadDir();
+          }
           this.loading = false;
         })
         .catch(err => {

@@ -65,6 +65,7 @@ import { open } from '@tauri-apps/api/dialog';
 import { ref, watch, computed } from "vue";
 import { readText } from '@tauri-apps/api/clipboard';
 import { emit } from '@tauri-apps/api/event';
+import { downloadDir } from "@tauri-apps/api/path";
 import { useDownloadsStore } from "../stores/DownloadsStore";
 
 const downloadsStore = useDownloadsStore();
@@ -76,6 +77,11 @@ const formats = ref([]);
 const streams = ref([]);
 const selectedStream = ref(null);
 const videoDetails = ref();
+
+setDefaultDirectory();
+async function setDefaultDirectory() {
+  directory.value = await downloadDir();
+}
 
 readText()
   .then(res => {

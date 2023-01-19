@@ -23,6 +23,9 @@
         "all": false,
         "open": true
       },
+      "path": {
+        "all": true
+      },
       "clipboard": {
         "all": true
       },
