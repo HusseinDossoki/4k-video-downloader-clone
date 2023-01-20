@@ -5,14 +5,11 @@
 <script setup>
 import { checkUpdate, installUpdate } from "@tauri-apps/api/updater";
 import { relaunch } from "@tauri-apps/api/process";
-import { useAppUpdatesStore } from "./stores/AppUpdatesStore";
+import { appWindow } from "@tauri-apps/api/window";
+import { invoke } from "@tauri-apps/api/tauri";
 
-const appUpdatesStore = useAppUpdatesStore();
-// checkTheUpdates();
-
-async function checkTheUpdates() {
-  if (appUpdatesStore.isUpdatesChecked) return;
-  appUpdatesStore.setUpdatesChecked();
+appWindow.listen("resume_downloading_all_pending", e => invoke("download_all_pending"));
+appWindow.listen("check_app_update", async e => {
   try {
     const { shouldUpdate, manifest } = await checkUpdate();
     if (shouldUpdate) {
@@ -24,5 +21,7 @@ async function checkTheUpdates() {
   } catch (error) {
     console.warn(error);
   }
-}
+});
+appWindow.emit("js_listeners_ready");
+
 </script>

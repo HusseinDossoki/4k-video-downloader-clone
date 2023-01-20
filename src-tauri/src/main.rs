@@ -14,7 +14,21 @@ pub mod file_system;
 pub mod schema;
 mod tauri_commands;
 pub mod youtube_downloader;
+use std::sync::atomic::{AtomicBool, Ordering};
+use tauri::Manager;
 use tauri_commands as commands;
+
+use crate::events_names::{CHECK_APP_UPDATE, RESUME_DOWNLOADING_ALL_PENDING};
+
+static EVENT_EMITTED: AtomicBool = AtomicBool::new(false);
+
+pub fn is_event_emitted() -> bool {
+    EVENT_EMITTED.load(Ordering::Relaxed)
+}
+
+pub fn set_event_emitted() {
+    EVENT_EMITTED.store(true, Ordering::Relaxed);
+}
 
 fn main() {
     // Apply the database migrations
@@ -40,7 +54,26 @@ fn main() {
             commands::queue_parsed_download,
             commands::parsing_video,
             commands::download_video,
+            commands::download_all_pending,
         ])
+        .on_page_load(|app, _| {
+            /*
+             * Work around to run the command once the app launch
+             * "setup, on_page_load Event::Ready are all too early for js listeners to be registered already. We do have plans do explore what we can do in the near future but no promises"
+             */
+            app.clone().listen("js_listeners_ready", move |_| {
+                if is_event_emitted() == false {
+                    println!("js listeners are ready");
+                    app.clone()
+                        .emit_all(RESUME_DOWNLOADING_ALL_PENDING, true)
+                        .unwrap();
+                    // app.clone().emit_all(CHECK_APP_UPDATE, true).unwrap();
+                    set_event_emitted();
+                }
+            });
+
+            return ();
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
