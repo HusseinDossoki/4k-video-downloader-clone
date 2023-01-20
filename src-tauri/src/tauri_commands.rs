@@ -178,3 +178,15 @@ pub async fn download_video(download_item: DownloadItem, window: Window) -> Resu
     video::download_video(&download_item, window).await;
     return Ok(());
 }
+
+#[tauri::command]
+pub async fn download_all_pending(window: Window) {
+    println!("started");
+    let downloads = downloads::get_downloads().unwrap();
+    for download in downloads.iter() {
+        if download.status == "downloading" {
+            video::download_video(download, window.clone()).await;
+        }
+    }
+    println!("ended");
+}
