@@ -5,9 +5,9 @@ use super::models::video::*;
 use super::stream;
 use crate::db;
 use crate::db::models::download::*;
+use crate::events_names::*;
 use rustube::{url::Url, Video, VideoDescrambler, VideoFetcher};
 use tauri::Window;
-use crate::events_names::*;
 
 use strum::IntoEnumIterator;
 
@@ -62,7 +62,7 @@ pub async fn get_video_details(url: &String) -> Result<VideoDetails, String> {
 
     let result = VideoDetails {
         title: video.title().to_string(),
-        file_name: video.title().to_string() + ".mp4",
+        file_name: get_file_name(video.title().to_string()),
         thumbnail: video
             .video_details()
             .thumbnails
@@ -126,7 +126,7 @@ pub async fn parsing_video(
     let result = ParsingVideoResult {
         stream: stream.clone(),
         title: stream.video_details.title.clone(),
-        file_name: stream.video_details.title.clone() + ".mp4",
+        file_name: get_file_name(stream.video_details.title.clone()),
         thumbnail: stream
             .video_details
             .thumbnails
@@ -153,7 +153,8 @@ pub async fn download_video(download_item: &DownloadItem, window: Window) {
     .unwrap()
     .stream;
 
-    let file_path = Path::new( &download_item.directory.clone()).join(&download_item.file_name.clone().unwrap());
+    let file_path =
+        Path::new(&download_item.directory.clone()).join(&download_item.file_name.clone().unwrap());
 
     let download_id = download_item.id;
     let window2 = window.clone();
@@ -164,10 +165,14 @@ pub async fn download_video(download_item: &DownloadItem, window: Window) {
                 id: download_id,
                 current_chunk: cargs.current_chunk.clone() as i32,
             };
-            window.emit(ON_DOWNLOAD_PROGRESS, download_progress).unwrap();
+            window
+                .emit(ON_DOWNLOAD_PROGRESS, download_progress)
+                .unwrap();
         })
         .connect_on_complete_closure(move |_| {
-            let result = db::downloads::update_download_status(&download_id, &"downloaded".to_string()).unwrap();
+            let result =
+                db::downloads::update_download_status(&download_id, &"downloaded".to_string())
+                    .unwrap();
             window2.emit(ON_DOWNLOAD_STATUS_CHANGES, result).unwrap();
         });
 
@@ -175,4 +180,19 @@ pub async fn download_video(download_item: &DownloadItem, window: Window) {
         .download_to_with_callback(file_path, callback)
         .await
         .unwrap();
+}
+
+fn get_file_name(title: String) -> String {
+    let ext = "mp4";
+    let cleaned_title = title
+        .replace("|", "")
+        .replace("?", "")
+        .replace("*", "")
+        .replace("/", "")
+        .replace("\\", "")
+        .replace("\"", "")
+        .replace(":", "")
+        .replace("<", "")
+        .replace(">", "");
+    return format!("{cleaned_title}.{ext}");
 }
