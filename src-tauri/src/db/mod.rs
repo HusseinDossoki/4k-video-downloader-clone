@@ -24,7 +24,7 @@ pub fn establish_connection() -> SqliteConnection {
         }
         Err(_) => {
             let home_dir = &tauri::api::path::home_dir().unwrap();
-            let app_dir = home_dir.join(".clone-4k-video-downloader");
+            let app_dir = home_dir.join(".4k-video-downloader-clone");
             std::fs::create_dir_all(&app_dir).unwrap();
 
             let database_url = path::Path::new(&app_dir).join("db.sqlite");

@@ -54,7 +54,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.clone-4k-video-downloader",
+      "identifier": "com.tauri.4k-video-downloader-clone",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
@@ -78,7 +78,7 @@
     "updater": {
       "active": false,
       "endpoints": [
-        "https://tauri-update-server.herokuapp.com/tauri-releases/clone-4k-video-downloader/{{target}}/{{current_version}}"
+        "https://tauri-update-server.herokuapp.com/tauri-releases/4k-video-downloader-clone/{{target}}/{{current_version}}"
       ],
       "dialog": true,
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDcyREEwRjdFOTE4QkQzQkIKUldTNzA0dVJmZy9hY29pNnY4S3dGOFAxK2g5R25jUTA4VG5WdUFTaStOWEo5Q2xIRmZNNnI4YWUK"
