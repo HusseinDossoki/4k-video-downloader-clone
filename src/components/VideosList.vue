@@ -236,8 +236,7 @@ section.odd {
 }
 
 img {
-  width: 90px;
-  /* height: 100%; */
+  width: 90px !important;
   margin: 0;
   padding: 0;
   border-radius: 2px;
