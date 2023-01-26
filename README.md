@@ -18,7 +18,7 @@ A *Clone* of [4K Video Downloader](https://www.4kdownload.com/-arokg/video-downl
 
 
 ## Features
-* **Downoad Speed** is one of the most important characteristics that distinguish our program compared to the original program
+* **Download Speed** is one of the most important characteristics that distinguish our program compared to the original program
 * **Binaryle Size** is small, **~7MB** compared to **~400MB** for the original program
 * **Memory Usage** is very small because of using Rust 💙 as a backend language
 
