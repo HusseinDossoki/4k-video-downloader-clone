@@ -9,7 +9,7 @@
             <div class="bar-item"><i class="fa-regular fa-clock"></i>
               {{ $filters.formatTime(videoDetails?.length_seconds) }}</div>
             <div class="bar-item"><i class="fa-solid fa-link"></i> <a target="_blank" :href="url">{{
-              $filters.truncate(url, 40)
+              $filters.truncate(url, 39)
             }}</a></div>
           </div>
         </div>
