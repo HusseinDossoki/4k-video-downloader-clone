@@ -61,7 +61,7 @@ cd 4k-video-downloader-clone
 npm install
 ```
 
-3) Start the tauri dev server
+4) Start the tauri dev server
 
 ```sh
 npm tauri run dev
